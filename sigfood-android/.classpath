@@ -5,8 +5,8 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/sigfood"/>
-	<classpathentry exported="true" kind="lib" path="/home/cody/workspace/sigfood-android/lib/httpclient-4.2-beta1.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/cody/workspace/sigfood-android/lib/httpcore-4.2-beta1.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/cody/workspace/sigfood-android/lib/httpmime-4.2-beta1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/httpclient-4.2-beta1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/httpcore-4.2-beta1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/httpmime-4.2-beta1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

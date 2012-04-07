@@ -57,12 +57,14 @@ public class SigfoodActivity extends Activity {
         SigfoodApi sigfood = new SigfoodApi();
         LinearLayout tv = (LinearLayout)this.findViewById(R.id.scroller);
 
+        TextView datum = (TextView)this.findViewById(R.id.datum);
+        datum.setText(sigfood.essen.get(0).tag);
         
         LinearLayout parent = tv;//(ScrollView)this.findViewById(R.id.scrollView1);//(ViewGroup) findViewById(R.id.vertical_container);
 
     	
         for(MensaEssen e : sigfood.essen) {
-        		View essen = LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
+        		LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
         		TextView t2 = (TextView)essen.findViewById(R.id.hauptgerichtBezeichnung);
         		t2.setText(Html.fromHtml(e.hauptgericht.bezeichnung) + "(" + e.hauptgericht.bewertung.schnitt + "/" + e.hauptgericht.bewertung.anzahl + ")");
         		TextView ueberschrift = (TextView)essen.findViewById(R.id.ueberschrift);
@@ -79,6 +81,31 @@ public class SigfoodActivity extends Activity {
         		bar1.setMax(5);
         		bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt + 0.5f));
         		ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
+        		
+        		for(Hauptgericht beilage : e.beilagen) {
+        			TextView beilage_bezeichnung = new TextView(getBaseContext(), null, android.R.attr.textAppearanceMedium); 
+        			beilage_bezeichnung.setText(Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + ")");
+        			essen.addView(beilage_bezeichnung);
+        			
+
+            		RatingBar bar2 = new RatingBar(this, null,android.R.attr.ratingBarStyle);
+            		bar2.setNumStars(5);
+            		bar2.setMax(5);
+            		bar2.setStepSize(1);
+            		bar2.setRating((int) (beilage.bewertung.schnitt + 0.5f));
+        			essen.addView(bar2);
+        			
+            		TextView kommentare2 = new TextView(getBaseContext(), null, android.R.attr.textAppearanceSmall); 
+            		String tmp2 = "";
+            		for(String s : beilage.kommentare) {
+            			tmp2 += "\"" + s + "\"" + "\n";
+            		}
+            		kommentare2.setText(tmp2);
+        			essen.addView(kommentare2);
+        		}
+        		
+        		
+        		
         		btn.setTag(e);
         		btn.setOnClickListener(new Button.OnClickListener() {  
         	        public void onClick(View v)

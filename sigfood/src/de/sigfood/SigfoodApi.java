@@ -93,6 +93,24 @@ public class SigfoodApi {
 				}
 				else if(n2.getNodeName().equals("beilage")){
 					Hauptgericht beilage = new Hauptgericht();
+					
+					beilage.id = Integer.parseInt(n2.getAttributes().getNamedItem("id").getTextContent());
+					
+					Node bewertung = getChildNode(n2, "bewertung");
+					beilage.bewertung.anzahl = Integer.parseInt(getChildNode(bewertung, "anzahl").getTextContent());
+					if(beilage.bewertung.anzahl > 0)
+						beilage.bewertung.schnitt = Float.parseFloat(getChildNode(bewertung, "schnitt").getTextContent());
+
+					beilage.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
+					
+					NodeList list2 = n2.getChildNodes();
+					for(int k=0;k<list2.getLength();++k) {
+						Node n3 = list2.item(k);
+						if(n3.getNodeName().equals("kommentar")) {
+							beilage.kommentare.add(getChildNode(n3, "text").getTextContent());
+						}
+					}
+					
 					e.beilagen.add(beilage);
 				}
 			}
