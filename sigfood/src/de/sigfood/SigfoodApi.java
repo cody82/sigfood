@@ -73,8 +73,10 @@ public class SigfoodApi {
 
 					Node bewertung = getChildNode(n2, "bewertung");
 					e.hauptgericht.bewertung.anzahl = Integer.parseInt(getChildNode(bewertung, "anzahl").getTextContent());
-					if(e.hauptgericht.bewertung.anzahl > 0)
+					if(e.hauptgericht.bewertung.anzahl > 0) {
 						e.hauptgericht.bewertung.schnitt = Float.parseFloat(getChildNode(bewertung, "schnitt").getTextContent());
+						e.hauptgericht.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
+					}
 					
 					e.hauptgericht.id = Integer.parseInt(n2.getAttributes().getNamedItem("id").getTextContent());
 					
@@ -98,9 +100,11 @@ public class SigfoodApi {
 					
 					Node bewertung = getChildNode(n2, "bewertung");
 					beilage.bewertung.anzahl = Integer.parseInt(getChildNode(bewertung, "anzahl").getTextContent());
-					if(beilage.bewertung.anzahl > 0)
+					if(beilage.bewertung.anzahl > 0) {
 						beilage.bewertung.schnitt = Float.parseFloat(getChildNode(bewertung, "schnitt").getTextContent());
-
+						beilage.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
+					}
+					
 					beilage.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
 					
 					NodeList list2 = n2.getChildNodes();

@@ -63,12 +63,14 @@ public class SigfoodActivity extends Activity {
         LinearLayout parent = tv;//(ScrollView)this.findViewById(R.id.scrollView1);//(ViewGroup) findViewById(R.id.vertical_container);
 
     	
-        for(MensaEssen e : sigfood.essen) {
+        for(final MensaEssen e : sigfood.essen) {
         		LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
         		TextView t2 = (TextView)essen.findViewById(R.id.hauptgerichtBezeichnung);
-        		t2.setText(Html.fromHtml(e.hauptgericht.bezeichnung) + "(" + e.hauptgericht.bewertung.schnitt + "/" + e.hauptgericht.bewertung.anzahl + ")");
+        		t2.setText(Html.fromHtml(e.hauptgericht.bezeichnung) + "(" + e.hauptgericht.bewertung.schnitt + "/" + e.hauptgericht.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
         		TextView ueberschrift = (TextView)essen.findViewById(R.id.ueberschrift);
         		ueberschrift.setText("Linie: " + e.linie);
+        		final Button ratingbutton = (Button)essen.findViewById(R.id.button1);
+        		
         		
         		TextView kommentare1 = (TextView)essen.findViewById(R.id.kommentare1);
         		String tmp = "";
@@ -77,23 +79,60 @@ public class SigfoodActivity extends Activity {
         		}
         		kommentare1.setText(tmp);
       		
-        		RatingBar bar1 = (RatingBar)essen.findViewById(R.id.ratingBar1);
+        		final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.ratingBar1);
         		bar1.setMax(5);
         		bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt + 0.5f));
+
+        		ratingbutton.setOnClickListener(new Button.OnClickListener() {  
+        	        public void onClick(View v)
+                    {
+        	        	if(bar1.isIndicator()) {
+        	        		ratingbutton.setText("Bewertung jetzt abgeben");
+        	        		bar1.setIsIndicator(false);
+        	        	}
+        	        	else {
+        	        		bar1.setIsIndicator(true);
+        	        		ratingbutton.setEnabled(false);
+        	        		if(bewerten(e, (int)bar1.getRating()))
+        	        			ratingbutton.setText("Bewertung abgegeben");
+        	        	}
+                    }
+                });
+        		
         		ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
         		
         		for(Hauptgericht beilage : e.beilagen) {
         			TextView beilage_bezeichnung = new TextView(getBaseContext(), null, android.R.attr.textAppearanceMedium); 
-        			beilage_bezeichnung.setText(Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + ")");
+        			beilage_bezeichnung.setText(Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
         			essen.addView(beilage_bezeichnung);
         			
 
-            		RatingBar bar2 = new RatingBar(this, null,android.R.attr.ratingBarStyle);
+            		final RatingBar bar2 = new RatingBar(this, null,android.R.attr.ratingBarStyleSmall);
+            		bar2.setIsIndicator(true);
             		bar2.setNumStars(5);
             		bar2.setMax(5);
             		bar2.setStepSize(1);
+            		bar2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
             		bar2.setRating((int) (beilage.bewertung.schnitt + 0.5f));
         			essen.addView(bar2);
+        			
+        			final Button ratingbutton2 = new Button(this, null,android.R.attr.buttonStyleSmall);
+        			ratingbutton2.setText("Beilage bewerten");
+        			ratingbutton2.setOnClickListener(new Button.OnClickListener() {  
+            	        public void onClick(View v)
+                        {
+            	        	if(bar2.isIndicator()) {
+            	        		ratingbutton2.setText("Bewertung jetzt abgeben");
+            	        		bar2.setIsIndicator(false);
+            	        	}
+            	        	else {
+            	        		bar2.setIsIndicator(true);
+            	        		ratingbutton2.setEnabled(false);
+            	        		ratingbutton2.setText("Bewertung abgegeben");
+            	        	}
+                        }
+                    });
+        			essen.addView(ratingbutton2);
         			
             		TextView kommentare2 = new TextView(getBaseContext(), null, android.R.attr.textAppearanceSmall); 
             		String tmp2 = "";
@@ -143,6 +182,32 @@ public class SigfoodActivity extends Activity {
         		
         		parent.addView(essen);
         }
+    }
+    
+    boolean bewerten(MensaEssen e, int stars) {
+        // Create a new HttpClient and Post Header
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("http://www.sigfood.de/");
+
+        try {
+        	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+        	nameValuePairs.add(new BasicNameValuePair("do", "1"));
+        	nameValuePairs.add(new BasicNameValuePair("beilagenid", "-1"));
+        	nameValuePairs.add(new BasicNameValuePair("datum", e.tag));
+        	nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.hauptgericht.id)));
+        
+        	httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            
+            HttpResponse response = httpclient.execute(httppost);
+            
+        } catch (ClientProtocolException e1) {
+        	return false;
+        } catch (IOException e1) {
+        	return false;
+        }
+    	
+        return true;
     }
     
     private Uri imageUri;
