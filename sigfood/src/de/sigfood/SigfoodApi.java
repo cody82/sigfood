@@ -61,7 +61,7 @@ public class SigfoodApi {
 
 			MensaEssen e = new MensaEssen();
 			
-			e.linie = Integer.parseInt(getChildNode(n, "linie").getTextContent());
+			e.linie = getChildNode(n, "linie").getTextContent();
 			e.tag = getChildNode(n.getParentNode(), "tag").getTextContent();
 			
 			NodeList l = n.getChildNodes();

@@ -60,8 +60,7 @@ public class SigfoodActivity extends Activity {
         TextView datum = (TextView)this.findViewById(R.id.datum);
         datum.setText(sigfood.essen.get(0).tag);
         
-        LinearLayout parent = tv;//(ScrollView)this.findViewById(R.id.scrollView1);//(ViewGroup) findViewById(R.id.vertical_container);
-
+        LinearLayout parent = tv;
     	
         for(final MensaEssen e : sigfood.essen) {
         		LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
@@ -93,7 +92,7 @@ public class SigfoodActivity extends Activity {
         	        	else {
         	        		bar1.setIsIndicator(true);
         	        		ratingbutton.setEnabled(false);
-        	        		if(bewerten(e, (int)bar1.getRating()))
+        	        		if(bewerten(e.hauptgericht, (int)bar1.getRating(), e.tag))
         	        			ratingbutton.setText("Bewertung abgegeben");
         	        	}
                     }
@@ -101,13 +100,13 @@ public class SigfoodActivity extends Activity {
         		
         		ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
         		
-        		for(Hauptgericht beilage : e.beilagen) {
+        		for(final Hauptgericht beilage : e.beilagen) {
         			TextView beilage_bezeichnung = new TextView(getBaseContext(), null, android.R.attr.textAppearanceMedium); 
         			beilage_bezeichnung.setText(Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
         			essen.addView(beilage_bezeichnung);
         			
 
-            		final RatingBar bar2 = new RatingBar(this, null,android.R.attr.ratingBarStyleSmall);
+            		final RatingBar bar2 = new RatingBar(this, null,android.R.attr.ratingBarStyle);
             		bar2.setIsIndicator(true);
             		bar2.setNumStars(5);
             		bar2.setMax(5);
@@ -128,7 +127,8 @@ public class SigfoodActivity extends Activity {
             	        	else {
             	        		bar2.setIsIndicator(true);
             	        		ratingbutton2.setEnabled(false);
-            	        		ratingbutton2.setText("Bewertung abgegeben");
+            	        		if(bewerten(beilage, (int)bar2.getRating(), e.tag))
+            	        			ratingbutton.setText("Bewertung abgegeben");
             	        	}
                         }
                     });
@@ -184,7 +184,7 @@ public class SigfoodActivity extends Activity {
         }
     }
     
-    boolean bewerten(MensaEssen e, int stars) {
+    boolean bewerten(Hauptgericht e, int stars, String tag) {
         // Create a new HttpClient and Post Header
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost("http://www.sigfood.de/");
@@ -192,9 +192,8 @@ public class SigfoodActivity extends Activity {
         try {
         	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
         	nameValuePairs.add(new BasicNameValuePair("do", "1"));
-        	nameValuePairs.add(new BasicNameValuePair("beilagenid", "-1"));
-        	nameValuePairs.add(new BasicNameValuePair("datum", e.tag));
-        	nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.hauptgericht.id)));
+        	nameValuePairs.add(new BasicNameValuePair("datum", tag));
+        	nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
         
         	httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
