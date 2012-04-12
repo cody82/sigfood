@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 
 public class SigfoodApi {
 	public ArrayList<MensaEssen> essen = new ArrayList<MensaEssen>();
-	
+
 	Node getChildNode(Node n, String name) {
 		NodeList list = n.getChildNodes();
 		for(int i=0;i<list.getLength();++i){
@@ -25,11 +25,11 @@ public class SigfoodApi {
 		}
 		return null;
 	}
-	
+
 	public SigfoodApi() {
-        
-		
-		
+
+
+
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
 		try {
@@ -54,20 +54,20 @@ public class SigfoodApi {
 		}
 		doc.getDocumentElement().normalize();
 
-		
+
 		NodeList list = doc.getDocumentElement().getElementsByTagName("Mensaessen");
 		for(int i=0;i<list.getLength();++i){
 			Node n=list.item(i);
 
 			MensaEssen e = new MensaEssen();
-			
+
 			e.linie = getChildNode(n, "linie").getTextContent();
 			e.tag = getChildNode(n.getParentNode(), "tag").getTextContent();
-			
+
 			NodeList l = n.getChildNodes();
 			for(int j=0;j<l.getLength();++j) {
 				Node n2 = l.item(j);
-				
+
 				if(n2.getNodeName().equals("hauptgericht")){
 					e.hauptgericht = new Hauptgericht();
 
@@ -77,9 +77,9 @@ public class SigfoodApi {
 						e.hauptgericht.bewertung.schnitt = Float.parseFloat(getChildNode(bewertung, "schnitt").getTextContent());
 						e.hauptgericht.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
 					}
-					
+
 					e.hauptgericht.id = Integer.parseInt(n2.getAttributes().getNamedItem("id").getTextContent());
-					
+
 					NodeList list2 = n2.getChildNodes();
 					for(int k=0;k<list2.getLength();++k) {
 						Node n3 = list2.item(k);
@@ -95,18 +95,18 @@ public class SigfoodApi {
 				}
 				else if(n2.getNodeName().equals("beilage")){
 					Hauptgericht beilage = new Hauptgericht();
-					
+
 					beilage.id = Integer.parseInt(n2.getAttributes().getNamedItem("id").getTextContent());
-					
+
 					Node bewertung = getChildNode(n2, "bewertung");
 					beilage.bewertung.anzahl = Integer.parseInt(getChildNode(bewertung, "anzahl").getTextContent());
 					if(beilage.bewertung.anzahl > 0) {
 						beilage.bewertung.schnitt = Float.parseFloat(getChildNode(bewertung, "schnitt").getTextContent());
 						beilage.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
 					}
-					
+
 					beilage.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
-					
+
 					NodeList list2 = n2.getChildNodes();
 					for(int k=0;k<list2.getLength();++k) {
 						Node n3 = list2.item(k);
@@ -114,12 +114,12 @@ public class SigfoodApi {
 							beilage.kommentare.add(getChildNode(n3, "text").getTextContent());
 						}
 					}
-					
+
 					e.beilagen.add(beilage);
 				}
 			}
 			essen.add(e);
-			
+
 		}
 	}
 }
