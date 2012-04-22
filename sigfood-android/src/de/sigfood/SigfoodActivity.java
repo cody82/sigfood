@@ -161,8 +161,8 @@ public class SigfoodActivity extends Activity {
 				try {
 					myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=320");
 				} catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
+					btn.setImageBitmap(bmImg);
 				}
 				try {
 					HttpURLConnection conn= (HttpURLConnection)myFileUrl.openConnection();
@@ -176,8 +176,8 @@ public class SigfoodActivity extends Activity {
 					Bitmap bmImg = BitmapFactory.decodeStream(is);
 					btn.setImageBitmap(bmImg);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
+					btn.setImageBitmap(bmImg);
 				}
 			} else {
 				Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
