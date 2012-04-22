@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
@@ -153,8 +154,9 @@ public class SigfoodActivity extends Activity {
 				}
 			});
 
-			if(e.hauptgericht.bilder.size() > 0) {
-				int bild_id = e.hauptgericht.bilder.get(0);
+			if (e.hauptgericht.bilder.size() > 0) {
+				Random rng = new Random();
+				int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
 				URL myFileUrl =null;
 				try {
 					myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=320");
@@ -177,6 +179,9 @@ public class SigfoodActivity extends Activity {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+			} else {
+				Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
+				btn.setImageBitmap(bmImg);
 			}
 
 
