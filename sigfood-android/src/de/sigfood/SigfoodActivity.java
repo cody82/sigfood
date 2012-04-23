@@ -83,7 +83,7 @@ public class SigfoodActivity extends Activity {
 
 		/* Now start to fill plan and download pictures */
 		final Date sfspd = sigfood.speiseplandatum;
-		datum.setText(String.format("%ta, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
+		datum.setText(String.format("%tA, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
 
 		for (final MensaEssen e : sigfood.essen) {
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
@@ -295,6 +295,13 @@ public class SigfoodActivity extends Activity {
 
 			// Execute HTTP Post Request
 			HttpResponse response = httpclient.execute(httppost);
+			if (response.getStatusLine() == null) {
+				throw new RuntimeException("nostatusline");
+			} else {
+				if (response.getStatusLine().getStatusCode() != 200) {
+					throw new RuntimeException("badstatuscode");
+				}
+			}
 
 		} catch (ClientProtocolException e1) {
 			// TODO Auto-generated catch block
