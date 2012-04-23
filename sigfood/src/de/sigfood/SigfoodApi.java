@@ -2,6 +2,7 @@ package de.sigfood;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,8 +28,10 @@ public class SigfoodApi {
 	}
 
 	public SigfoodApi() {
-
-
+		this(null);
+	}
+	
+	public SigfoodApi(Date date) {
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
@@ -41,7 +44,12 @@ public class SigfoodApi {
 		}
 		Document doc;
 		try {
-			doc = dBuilder.parse("http://www.sigfood.de/?do=api.gettagesplan");
+			String url = "http://www.sigfood.de/?do=api.gettagesplan";
+			if (date != null) {
+				url += ("&datum=");
+				url += String.format("%tY-%tm-%td", date, date, date);
+			}
+			doc = dBuilder.parse(url);
 			//doc = dBuilder.parse("/home/cody/sigfood.xml");
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
