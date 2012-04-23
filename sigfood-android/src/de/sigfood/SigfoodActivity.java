@@ -226,6 +226,13 @@ public class SigfoodActivity extends Activity {
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 			HttpResponse response = httpclient.execute(httppost);
+			if (response.getStatusLine() == null) {
+				return false;
+			} else {
+				if (response.getStatusLine().getStatusCode() != 200) {
+					return false;
+				}
+			}
 
 		} catch (ClientProtocolException e1) {
 			return false;
