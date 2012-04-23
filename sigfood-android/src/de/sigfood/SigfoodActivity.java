@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -51,23 +53,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SigfoodActivity extends Activity {
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-
-
-		SigfoodApi sigfood = new SigfoodApi();
 		LinearLayout tv = (LinearLayout)this.findViewById(R.id.scroller);
+		tv.removeAllViews();
+		TextView loadingtext = new TextView(getBaseContext(), null, android.R.attr.textAppearanceMedium); 
+		loadingtext.setText("Starting up");
+		tv.addView(loadingtext);
+		
+		fillspeiseplan(null);
+	}
+	
+	public void fillspeiseplan(Date d) {
 
+		LinearLayout parent = (LinearLayout)this.findViewById(R.id.scroller);
 		TextView datum = (TextView)this.findViewById(R.id.datum);
-		datum.setText(sigfood.essen.get(0).tag);
 
-		LinearLayout parent = tv;
+		/* First clear and show loading text */
+		datum.setText("Loading...");
+		parent.removeAllViews();
 
-		for(final MensaEssen e : sigfood.essen) {
+		/* This actually downloads the plan, so can be rather costly */
+		SigfoodApi sigfood = new SigfoodApi(d);
+
+		/* Now start to fill plan and download pictures */
+		final Date sfspd = sigfood.speiseplandatum;
+		datum.setText(String.format("%ta, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
+
+		for (final MensaEssen e : sigfood.essen) {
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
 			TextView t2 = (TextView)essen.findViewById(R.id.hauptgerichtBezeichnung);
 			t2.setText(Html.fromHtml(e.hauptgericht.bezeichnung) + "(" + e.hauptgericht.bewertung.schnitt + "/" + e.hauptgericht.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
@@ -78,7 +96,7 @@ public class SigfoodActivity extends Activity {
 
 			TextView kommentare1 = (TextView)essen.findViewById(R.id.kommentare1);
 			String tmp = "";
-			for(String s : e.hauptgericht.kommentare) {
+			for (String s : e.hauptgericht.kommentare) {
 				tmp += "\"" + s + "\"" + "\n";
 			}
 			kommentare1.setText(tmp);
@@ -97,7 +115,7 @@ public class SigfoodActivity extends Activity {
 					else {
 						bar1.setIsIndicator(true);
 						ratingbutton.setEnabled(false);
-						if(bewerten(e.hauptgericht, (int)bar1.getRating(), e.tag))
+						if (bewerten(e.hauptgericht, (int)bar1.getRating(), sfspd))
 							ratingbutton.setText("Bewertung abgegeben");
 					}
 				}
@@ -105,7 +123,7 @@ public class SigfoodActivity extends Activity {
 
 			ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
 
-			for(final Hauptgericht beilage : e.beilagen) {
+			for (final Hauptgericht beilage : e.beilagen) {
 				TextView beilage_bezeichnung = new TextView(getBaseContext(), null, android.R.attr.textAppearanceMedium); 
 				beilage_bezeichnung.setText(Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
 				essen.addView(beilage_bezeichnung);
@@ -132,7 +150,7 @@ public class SigfoodActivity extends Activity {
 						else {
 							bar2.setIsIndicator(true);
 							ratingbutton2.setEnabled(false);
-							if(bewerten(beilage, (int)bar2.getRating(), e.tag))
+							if (bewerten(beilage, (int)bar2.getRating(), sfspd))
 								ratingbutton.setText("Bewertung abgegeben");
 						}
 					}
@@ -193,7 +211,7 @@ public class SigfoodActivity extends Activity {
 		}
 	}
 
-	boolean bewerten(Hauptgericht e, int stars, String tag) {
+	boolean bewerten(Hauptgericht e, int stars, Date tag) {
 		// Create a new HttpClient and Post Header
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
@@ -201,11 +219,11 @@ public class SigfoodActivity extends Activity {
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
 			nameValuePairs.add(new BasicNameValuePair("do", "1"));
-			nameValuePairs.add(new BasicNameValuePair("datum", tag));
+			nameValuePairs.add(new BasicNameValuePair("datum",
+					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
 			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
 
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
 
 			HttpResponse response = httpclient.execute(httppost);
 
@@ -257,7 +275,7 @@ public class SigfoodActivity extends Activity {
 		dialog.show();
 	}
 
-	void uploadPic(MensaEssen e, String filepath) {
+	void uploadPic(MensaEssen e, Date d, String filepath) {
 		// Create a new HttpClient and Post Header
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
@@ -267,7 +285,7 @@ public class SigfoodActivity extends Activity {
 			MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);  
 			multipartEntity.addPart("do", new StringBody("4"));
 			multipartEntity.addPart("beilagenid", new StringBody("-1"));
-			multipartEntity.addPart("datum", new StringBody(e.tag));
+			multipartEntity.addPart("datum", new StringBody(String.format("%tY-%tm-%td", d, d, d)));
 			multipartEntity.addPart("gerid", new StringBody(Integer.toString(e.hauptgericht.id)));
 
 			File f = new File(filepath);
@@ -312,7 +330,9 @@ public class SigfoodActivity extends Activity {
 					}
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
 					imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 320, 200, false));
-					uploadPic((MensaEssen)phototarget.getTag(), path);
+					uploadPic((MensaEssen)phototarget.getTag(),
+							  ((MensaEssen)phototarget.getTag()).datumskopie,
+							  path);
 					Toast.makeText(this, "Upload done" ,Toast.LENGTH_LONG).show();
 				} catch (Exception e) {
 					Toast.makeText(this, "Failed to load or upload" + path, Toast.LENGTH_SHORT).show();

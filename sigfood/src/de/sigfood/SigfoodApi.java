@@ -1,6 +1,8 @@
 package de.sigfood;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,6 +10,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -15,6 +18,9 @@ import org.xml.sax.SAXException;
 
 public class SigfoodApi {
 	public ArrayList<MensaEssen> essen = new ArrayList<MensaEssen>();
+	public Date speiseplandatum;
+	public Date naechstertag;
+	public Date vorherigertag;
 
 	Node getChildNode(Node n, String name) {
 		NodeList list = n.getChildNodes();
@@ -64,16 +70,33 @@ public class SigfoodApi {
 
 
 		NodeList list = doc.getDocumentElement().getElementsByTagName("Mensaessen");
-		for(int i=0;i<list.getLength();++i){
-			Node n=list.item(i);
+
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		naechstertag = null;
+		vorherigertag = null;
+		try {
+			NodeList blubb = doc.getDocumentElement().getElementsByTagName("Tagesmenue");
+			speiseplandatum = df.parse(getChildNode(blubb.item(0), "tag").getTextContent());
+			vorherigertag = df.parse(getChildNode(blubb.item(0), "vorherigertag").getTextContent());
+			naechstertag = df.parse(getChildNode(blubb.item(0), "naechstertag").getTextContent());
+		} catch (DOMException e1) {
+			speiseplandatum = new Date();
+		} catch (ParseException e1) {
+			speiseplandatum = new Date();
+		} catch (Exception e1) { /* ANY exception at all, we do not care */
+			speiseplandatum = new Date();
+		}
+		
+		for (int i = 0; i < list.getLength(); ++i){
+			Node n = list.item(i);
 
 			MensaEssen e = new MensaEssen();
 
 			e.linie = getChildNode(n, "linie").getTextContent();
-			e.tag = getChildNode(n.getParentNode(), "tag").getTextContent();
+			e.datumskopie = speiseplandatum;
 
 			NodeList l = n.getChildNodes();
-			for(int j=0;j<l.getLength();++j) {
+			for (int j = 0; j < l.getLength(); ++j) {
 				Node n2 = l.item(j);
 
 				if(n2.getNodeName().equals("hauptgericht")){
