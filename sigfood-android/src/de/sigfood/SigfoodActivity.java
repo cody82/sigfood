@@ -24,8 +24,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -37,6 +40,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -216,6 +220,7 @@ public class SigfoodActivity extends Activity {
 
 	private Uri imageUri;
 	final int TAKE_PICTURE = 19238;
+	final int PICK_FROM_FILE = 19239;
 
 	ImageButton phototarget;
 
@@ -223,15 +228,36 @@ public class SigfoodActivity extends Activity {
 		ImageButton btn = (ImageButton)v;
 		phototarget = btn;
 
+		final String[] items = new String[] { "Select from file", "Take picture"};
+		ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.select_dialog_item, items);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Select Image");
+		builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
+			public void onClick( DialogInterface dialog, int item ) {
+				if (item == 0) {
+					Intent intent = new Intent();
 
-		Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-		File photo = new File(Environment.getExternalStorageDirectory(),  "sigfood.jpg");
-		intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photo));
-		imageUri = Uri.fromFile(photo);
-		startActivityForResult(intent, TAKE_PICTURE);
+	                intent.setType("image/*");
+	                intent.setAction(Intent.ACTION_GET_CONTENT);
+
+	                startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_FROM_FILE);
+				} else {
+					Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+					File photo = new File(Environment.getExternalStorageDirectory(), "sigfood.jpg");
+					intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photo));
+					imageUri = Uri.fromFile(photo);
+					startActivityForResult(intent, TAKE_PICTURE);
+
+					dialog.cancel();
+				}
+			}
+		} );
+
+		final AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
-	void uploadPic(MensaEssen e, Uri uri) {
+	void uploadPic(MensaEssen e, String filepath) {
 		// Create a new HttpClient and Post Header
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
@@ -244,7 +270,7 @@ public class SigfoodActivity extends Activity {
 			multipartEntity.addPart("datum", new StringBody(e.tag));
 			multipartEntity.addPart("gerid", new StringBody(Integer.toString(e.hauptgericht.id)));
 
-			File f = new File(Environment.getExternalStorageDirectory(),  "sigfood.jpg");
+			File f = new File(filepath);
 			multipartEntity.addPart("newimg", new FileBody(f));
 			httppost.setEntity(multipartEntity);
 
@@ -265,27 +291,50 @@ public class SigfoodActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-		case TAKE_PICTURE:
-			if (resultCode == Activity.RESULT_OK) {
-				Uri selectedImage = imageUri;
+		if (resultCode == Activity.RESULT_OK) {
+			Uri selectedImage = null;
+			switch (requestCode) {
+			case TAKE_PICTURE:
+				selectedImage = imageUri;
+				break;
+			case PICK_FROM_FILE:
+				selectedImage = data.getData();
+				break;
+			}
+			if (selectedImage != null) {
 				getContentResolver().notifyChange(selectedImage, null);
-				ImageView imageView = phototarget;//(ImageView) findViewById(R.id.ImageView);
-				ContentResolver cr = getContentResolver();
-				Bitmap bitmap;
+				ImageView imageView = phototarget;
+				String path = "";
 				try {
-					bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, selectedImage);
-
+					path = getRealPathFromURI(selectedImage); /* Try to resolve content:// crap URLs */
+					if (path == null) { /* Oups, that failed, so... */
+						path = selectedImage.getPath(); /* just take the path part of URL */
+					}
+					Bitmap bitmap = BitmapFactory.decodeFile(path);
 					imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 320, 200, false));
-					uploadPic((MensaEssen)phototarget.getTag(), imageUri);
-					Toast.makeText(this, selectedImage.toString(),Toast.LENGTH_LONG).show();
+					uploadPic((MensaEssen)phototarget.getTag(), path);
+					Toast.makeText(this, "Upload done" ,Toast.LENGTH_LONG).show();
 				} catch (Exception e) {
-					Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "Failed to load or upload" + path, Toast.LENGTH_SHORT).show();
 					Log.e("Camera", e.toString());
 				}
 			}
 		}
 	}
 
-
+	/* I seriously haven't got the slightest clue what this does, it's copied from
+	 * some howto. The more interesting question is why I even need this crap,
+	 * and why there are no more sensible functions in the API, like
+	 * JUSTGIVEMETHEFUCKINGPATHOFTHATCONTENTCRAP()
+	 */
+	public String getRealPathFromURI(Uri contentUri) {
+		String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+        if (cursor == null) {
+        	return null;
+        }
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+	}
 }
