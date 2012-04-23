@@ -4,6 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+	<View
+		android:layout_width="fill_parent"
+		android:layout_height="2dip"
+		android:background="#8080FF" />
     <TextView
         android:id="@+id/ueberschrift"
         android:layout_width="wrap_content"
