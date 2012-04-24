@@ -73,16 +73,20 @@ public class SigfoodActivity extends Activity {
 		next_date.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v)
 			{
-				if(sigfood != null) {
-					fillspeiseplan(sigfood.naechstertag);
+				if (sigfood != null) {
+					if (sigfood.naechstertag != null) {
+						fillspeiseplan(sigfood.naechstertag);
+					}
 				}
 			}
 		});
 		prev_date.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v)
 			{
-				if(sigfood != null) {
-					fillspeiseplan(sigfood.vorherigertag);
+				if (sigfood != null) {
+					if (sigfood.vorherigertag != null) {
+						fillspeiseplan(sigfood.vorherigertag);
+					}
 				}
 			}
 		});
