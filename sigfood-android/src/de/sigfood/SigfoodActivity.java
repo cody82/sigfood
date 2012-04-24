@@ -66,8 +66,31 @@ public class SigfoodActivity extends Activity {
 		loadingtext.setText("Starting up");
 		tv.addView(loadingtext);
 		
+
+		Button prev_date = (Button)this.findViewById(R.id.prev_date);
+		Button next_date = (Button)this.findViewById(R.id.next_date);
+		
+		next_date.setOnClickListener(new Button.OnClickListener() {  
+			public void onClick(View v)
+			{
+				if(sigfood != null) {
+					fillspeiseplan(sigfood.naechstertag);
+				}
+			}
+		});
+		prev_date.setOnClickListener(new Button.OnClickListener() {  
+			public void onClick(View v)
+			{
+				if(sigfood != null) {
+					fillspeiseplan(sigfood.vorherigertag);
+				}
+			}
+		});
+		
 		fillspeiseplan(null);
 	}
+	
+	SigfoodApi sigfood;
 	
 	public void fillspeiseplan(Date d) {
 
@@ -79,7 +102,7 @@ public class SigfoodActivity extends Activity {
 		parent.removeAllViews();
 
 		/* This actually downloads the plan, so can be rather costly */
-		SigfoodApi sigfood = new SigfoodApi(d);
+		sigfood = new SigfoodApi(d);
 
 		/* Now start to fill plan and download pictures */
 		final Date sfspd = sigfood.speiseplandatum;
