@@ -72,6 +72,7 @@ public class SigfoodApi {
 		NodeList list = doc.getDocumentElement().getElementsByTagName("Mensaessen");
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		speiseplandatum = new Date();
 		naechstertag = null;
 		vorherigertag = null;
 		try {
@@ -80,11 +81,11 @@ public class SigfoodApi {
 			vorherigertag = df.parse(getChildNode(blubb.item(0), "vorherigertag").getTextContent());
 			naechstertag = df.parse(getChildNode(blubb.item(0), "naechstertag").getTextContent());
 		} catch (DOMException e1) {
-			speiseplandatum = new Date();
+			// nothing to do, just ignore it
 		} catch (ParseException e1) {
-			speiseplandatum = new Date();
+			// nothing to do, just ignore it
 		} catch (Exception e1) { /* ANY exception at all, we do not care */
-			speiseplandatum = new Date();
+			// nothing to do, just ignore it
 		}
 		
 		for (int i = 0; i < list.getLength(); ++i){
