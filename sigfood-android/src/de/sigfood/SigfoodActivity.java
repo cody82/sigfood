@@ -111,6 +111,11 @@ public class SigfoodActivity extends Activity {
 		/* Now start to fill plan and download pictures */
 		final Date sfspd = sigfood.speiseplandatum;
 		datum.setText(String.format("%tA, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
+		
+		Button next_date = (Button)this.findViewById(R.id.next_date);
+		next_date.setEnabled(sigfood.naechstertag != null);
+		Button prev_date = (Button)this.findViewById(R.id.prev_date);
+		prev_date.setEnabled(sigfood.vorherigertag != null);
 
 		for (final MensaEssen e : sigfood.essen) {
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensaessen, null);
