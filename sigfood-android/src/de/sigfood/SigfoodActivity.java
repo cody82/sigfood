@@ -130,7 +130,7 @@ public class SigfoodActivity extends Activity {
 			TextView kommentare1 = (TextView)essen.findViewById(R.id.kommentare1);
 			String tmp = "";
 			for (String s : e.hauptgericht.kommentare) {
-				tmp += "\"" + s + "\"" + "\n";
+				tmp += "\"" + Html.fromHtml(s) + "\"" + "\n";
 			}
 			kommentare1.setText(tmp);
 
@@ -223,7 +223,7 @@ public class SigfoodActivity extends Activity {
 				TextView kommentare2 = new TextView(getBaseContext(), null, android.R.attr.textAppearanceSmall); 
 				String tmp2 = "";
 				for(String s : beilage.kommentare) {
-					tmp2 += "\"" + s + "\"" + "\n";
+					tmp2 += "\"" + Html.fromHtml(s) + "\"" + "\n";
 				}
 				kommentare2.setText(tmp2);
 				essen.addView(kommentare2);
