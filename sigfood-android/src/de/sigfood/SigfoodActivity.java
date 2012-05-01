@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -153,6 +154,36 @@ public class SigfoodActivity extends Activity {
 				}
 			});
 
+			final Button kommentieren = (Button)essen.findViewById(R.id.kommentieren);
+			final LinearLayout kommentar = (LinearLayout)essen.findViewById(R.id.kommentar);
+			final EditText kommentar_name = (EditText)essen.findViewById(R.id.kommentar_name);
+			final EditText kommentar_text = (EditText)essen.findViewById(R.id.kommentar_text);
+			
+			kommentieren.setOnClickListener(new Button.OnClickListener() {  
+				public void onClick(View v)
+				{
+					if(kommentar.getVisibility() == View.GONE) {
+						kommentar.setVisibility(View.VISIBLE);
+						kommentieren.setText("Kommentar abschicken");
+					}
+					else {
+						kommentar.setVisibility(View.GONE);
+						String name = kommentar_name.getText().toString();
+						String text = kommentar_text.getText().toString();
+						if(name.length() > 0 && text.length() > 0) {
+							if(kommentieren(e.hauptgericht, sfspd, name, text)) {
+								kommentieren.setText("Kommentar abgegeben");
+								kommentieren.setEnabled(false);
+								return;
+							}
+						}
+						kommentieren.setText("Kommentieren fehlgeschlagen");
+					}
+				}
+			});
+			
+			
+			
 			ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
 
 			for (final Hauptgericht beilage : e.beilagen) {
@@ -243,8 +274,38 @@ public class SigfoodActivity extends Activity {
 		}
 	}
 
+	boolean kommentieren(Hauptgericht e, Date tag, String name, String kommentar) {
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
+
+		try {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+			nameValuePairs.add(new BasicNameValuePair("do", "2"));
+			nameValuePairs.add(new BasicNameValuePair("datum",
+					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
+			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
+
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+			HttpResponse response = httpclient.execute(httppost);
+			if (response.getStatusLine() == null) {
+				return false;
+			} else {
+				if (response.getStatusLine().getStatusCode() != 200) {
+					return false;
+				}
+			}
+
+		} catch (ClientProtocolException e1) {
+			return false;
+		} catch (IOException e1) {
+			return false;
+		}
+
+		return true;
+	}
+	
 	boolean bewerten(Hauptgericht e, int stars, Date tag) {
-		// Create a new HttpClient and Post Header
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
 
