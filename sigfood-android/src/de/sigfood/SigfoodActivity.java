@@ -2,6 +2,8 @@ package de.sigfood;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -27,6 +29,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +37,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -375,7 +379,72 @@ public class SigfoodActivity extends Activity {
 		dialog.show();
 	}
 
+	public class UploadPhotoTaskParams {
+		public UploadPhotoTaskParams(MensaEssen e, Date d, String filepath) {
+			this.e=e;
+			this.d=d;
+			this.filepath=filepath;
+		}
+		public MensaEssen e;
+		public Date d;
+		public String filepath;
+	}
+	public class UploadPhotoTask extends AsyncTask<UploadPhotoTaskParams, Integer, Boolean> implements HttpMultipartClient.ProgressListener{
+
+		@Override
+		protected Boolean doInBackground(UploadPhotoTaskParams... arg0) {
+			HttpMultipartClient httpMultipartClient = new HttpMultipartClient("sigfood.de", "/", 80);
+			FileInputStream fis;
+			try {
+				fis = new FileInputStream(new File(Environment.getExternalStorageDirectory(), "sigfood.jpg"));
+				httpMultipartClient.addFile("sigfood.jpg", fis, fis.available());
+				httpMultipartClient.addField("do", "4");
+				httpMultipartClient.addField("beilagenid", "-1");
+				httpMultipartClient.addField("datum", String.format("%tY-%tm-%td", arg0[0].d, arg0[0].d, arg0[0].d));
+				httpMultipartClient.addField("gerid", Integer.toString(arg0[0].e.hauptgericht.id));
+				httpMultipartClient.setRequestMethod("POST");
+				httpMultipartClient.send(this);
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return false;
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+				return false;
+			}
+			return true;
+		}
+		@Override
+	     protected void onProgressUpdate(Integer... progress) {
+	         pd.setProgress(progress[0]);
+	         pd.setMessage(progress[0].toString() + " Bytes übertragen.");
+	     }
+
+		@Override
+	     protected void onPostExecute(Boolean result) {
+			pd.dismiss();
+			if(result)
+				Toast.makeText(SigfoodActivity.this, "Upload done" ,Toast.LENGTH_LONG).show();
+			else
+				Toast.makeText(SigfoodActivity.this, "Failed to load or upload", Toast.LENGTH_SHORT).show();
+	     }
+		@Override
+		public void transferred(int bytes) {
+			this.publishProgress(bytes);
+		}
+
+	}
+	
+	private ProgressDialog pd;
 	void uploadPic(MensaEssen e, Date d, String filepath) {
+		pd = ProgressDialog.show(this, "Das Foto wird gerade hochgeladen...", "Bitte warten...", false, false);
+		pd.setMax(100);
+		UploadPhotoTask upload = new UploadPhotoTask();
+		upload.execute(new UploadPhotoTaskParams(e,d,filepath));
+	}
+	
+	void uploadPic2(MensaEssen e, Date d, String filepath) {
 		// Create a new HttpClient and Post Header
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
@@ -440,9 +509,9 @@ public class SigfoodActivity extends Activity {
 					uploadPic((MensaEssen)phototarget.getTag(),
 							  ((MensaEssen)phototarget.getTag()).datumskopie,
 							  path);
-					Toast.makeText(this, "Upload done" ,Toast.LENGTH_LONG).show();
+					//Toast.makeText(this, "Upload done" ,Toast.LENGTH_LONG).show();
 				} catch (Exception e) {
-					Toast.makeText(this, "Failed to load or upload" + path, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(this, "Failed to load or upload" + path, Toast.LENGTH_SHORT).show();
 					Log.e("Camera", e.toString());
 				}
 			}
