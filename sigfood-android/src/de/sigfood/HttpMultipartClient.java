@@ -105,7 +105,7 @@ public class HttpMultipartClient {
     // ---------- Private fields
     private static final String TAG = "HttpMultipartClient";
 
-    private static final int CONNECTION_TIMEOUT = 10000;
+    private static final int CONNECTION_TIMEOUT = 30000;
     private static final String END = "\r\n";
     private final String boundary = new Integer(
             new Random().nextInt(Integer.MAX_VALUE)).toString();
@@ -252,7 +252,7 @@ public class HttpMultipartClient {
         try {
             // We send the Http Request
             socket.connect(new InetSocketAddress(host, port));
-            // socket.setSoTimeout(CONNECTION_TIMEOUT);
+            socket.setSoTimeout(CONNECTION_TIMEOUT);
             int bytesSent = 0;
             PrintStream out = new PrintStream(socket.getOutputStream());
             out.print(headersBuffer);
@@ -329,7 +329,7 @@ public class HttpMultipartClient {
 
         headersBuffer = new StringBuilder();
         headersBuffer.append(method + " " + path + " HTTP/1.1" + END);
-        headersBuffer.append("User-Agent: FileSocialClient 1.0" + END);
+        headersBuffer.append("User-Agent: Sigfood Android App (Enterprise Ready)" + END);
         headersBuffer.append("Host: " + host + END);
         headersBuffer.append("Content-Type: multipart/form-data; boundary="
                 + boundary + END);
@@ -406,7 +406,7 @@ public class HttpMultipartClient {
             bodyBuffer.append(boundary);
             bodyBuffer.append(END);
             bodyBuffer.append("Content-Disposition: form-data; name=\"");
-            bodyBuffer.append("file");
+            bodyBuffer.append("newimg");
             bodyBuffer.append("\"; filename=\"");
             bodyBuffer.append(fileName);
             bodyBuffer.append("\"");

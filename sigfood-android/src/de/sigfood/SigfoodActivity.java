@@ -393,10 +393,10 @@ public class SigfoodActivity extends Activity {
 
 		@Override
 		protected Boolean doInBackground(UploadPhotoTaskParams... arg0) {
-			HttpMultipartClient httpMultipartClient = new HttpMultipartClient("sigfood.de", "/", 80);
+			HttpMultipartClient httpMultipartClient = new HttpMultipartClient("www.sigfood.de", "/", 80);
 			FileInputStream fis;
 			try {
-				fis = new FileInputStream(new File(Environment.getExternalStorageDirectory(), "sigfood.jpg"));
+				fis = new FileInputStream(new File(arg0[0].filepath));
 				httpMultipartClient.addFile("sigfood.jpg", fis, fis.available());
 				httpMultipartClient.addField("do", "4");
 				httpMultipartClient.addField("beilagenid", "-1");
