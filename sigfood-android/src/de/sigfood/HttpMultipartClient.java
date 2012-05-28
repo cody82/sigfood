@@ -263,7 +263,7 @@ public class HttpMultipartClient {
             int size;
             while ((size = fileStream.read(bytes)) > 0) {
                 bytesSent += size;
-                Log.i("de.sigfood", Integer.toString(bytesSent));
+                //Log.i("de.sigfood", Integer.toString(bytesSent));
                 progress.transferred(bytesSent);
                 out.write(bytes, 0, size);
                 out.flush();

@@ -4,6 +4,7 @@ package de.sigfood;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -505,6 +506,21 @@ public class SigfoodActivity extends Activity {
 						path = selectedImage.getPath(); /* just take the path part of URL */
 					}
 					Bitmap bitmap = BitmapFactory.decodeFile(path);
+					
+					int w = bitmap.getWidth();
+					int h = bitmap.getHeight();
+					float aspect = (float)w/(float)h;
+					if(w > 800 || h > 600) {
+						File file_resized = new File(Environment.getExternalStorageDirectory(), "sigfood_resized.jpg");
+						Bitmap bitmap_resized = Bitmap.createScaledBitmap(bitmap, 800, (int)(600.0f * aspect), false);
+					    FileOutputStream out = new FileOutputStream(file_resized);
+					    bitmap_resized.compress(Bitmap.CompressFormat.JPEG, 85, out);
+					    long oldsize = new File(path).length();
+					    Log.i("de.sigfood", "resize: " + w + ", " + h + ", " + oldsize + "->" + file_resized.length());
+					    if(file_resized.length() < oldsize)
+					    	path = file_resized.getPath();
+					}
+					
 					imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 320, 200, false));
 					uploadPic((MensaEssen)phototarget.getTag(),
 							  ((MensaEssen)phototarget.getTag()).datumskopie,
