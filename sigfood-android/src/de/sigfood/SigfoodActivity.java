@@ -430,7 +430,7 @@ public class SigfoodActivity extends Activity {
 			else
 				Toast.makeText(SigfoodActivity.this, "Failed to load or upload", Toast.LENGTH_SHORT).show();
 	     }
-		@Override
+
 		public void transferred(int bytes) {
 			this.publishProgress(bytes);
 		}
