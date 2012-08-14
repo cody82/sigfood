@@ -512,7 +512,7 @@ public class SigfoodActivity extends Activity {
 					float aspect = (float)w/(float)h;
 					if(w > 800 || h > 600) {
 						File file_resized = new File(Environment.getExternalStorageDirectory(), "sigfood_resized.jpg");
-						Bitmap bitmap_resized = Bitmap.createScaledBitmap(bitmap, 800, (int)(600.0f * aspect), false);
+						Bitmap bitmap_resized = Bitmap.createScaledBitmap(bitmap, 800, (int)(800.0f / aspect), false);
 					    FileOutputStream out = new FileOutputStream(file_resized);
 					    bitmap_resized.compress(Bitmap.CompressFormat.JPEG, 85, out);
 					    long oldsize = new File(path).length();
