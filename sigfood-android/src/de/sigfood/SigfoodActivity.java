@@ -32,11 +32,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,7 +48,6 @@ import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +58,7 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 
 public class SigfoodActivity extends Activity {
 	
@@ -140,24 +142,49 @@ public class SigfoodActivity extends Activity {
 			kommentare1.setText(tmp);
 
 			final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.ratingBar1);
-			bar1.setMax(5);
-			bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt + 0.5f));
+			bar1.setMax(50);
+			bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
 
-			ratingbutton.setOnClickListener(new Button.OnClickListener() {  
-				public void onClick(View v)
-				{
-					if(bar1.isIndicator()) {
-						ratingbutton.setText("Bewertung jetzt abgeben");
-						bar1.setIsIndicator(false);
+			Calendar today = Calendar.getInstance();
+			int hour = today.get(Calendar.HOUR);
+			int am = today.get(Calendar.AM_PM);
+			today.set(Calendar.HOUR,0); today.set(Calendar.AM_PM,Calendar.AM);	today.set(Calendar.MINUTE,0);	today.set(Calendar.SECOND,0);	today.set(Calendar.MILLISECOND,0);
+			Calendar twoago = (Calendar) today.clone();
+			twoago.roll(Calendar.DATE, -2);
+			Calendar start = Calendar.getInstance();
+			start.set(sfspd.getYear()+1900, sfspd.getMonth(), sfspd.getDate(), 0, 0, 0);	start.set(Calendar.MILLISECOND,0);
+			
+			if (start.before(twoago)) {
+				ratingbutton.setEnabled(false);
+				ratingbutton.setText("Bewertung nicht mehr möglich");
+			} else if (((hour>=11 || am==Calendar.PM) && start.equals(today)) || start.before(today)) {			
+				ratingbutton.setOnClickListener(new Button.OnClickListener() {  
+					public void onClick(View v)
+					{
+						if(bar1.isIndicator()) {
+							//bar1.setProgressDrawable(getResources().getDrawable(R.drawable.ratingbar_full_green));
+							//bar1.getProgressDrawable().invalidateSelf();
+							bar1.setMax(5);
+							bar1.setProgress(0);
+							ratingbutton.setText("Bewertung abgeben");
+							bar1.setIsIndicator(false);
+						} else {
+							//bar1.setProgressDrawable(getResources().getDrawable(R.drawable.ratingbar_full_yellow));
+							//bar1.getProgressDrawable().invalidateSelf();
+							bar1.setMax(50);
+							bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
+							bar1.setIsIndicator(true);
+							ratingbutton.setEnabled(false);
+							Log.d("rating",""+(int)bar1.getRating());
+							if (bewerten(e.hauptgericht, (int)bar1.getRating(), sfspd))
+								ratingbutton.setText("Bewertung abgegeben");
+						}
 					}
-					else {
-						bar1.setIsIndicator(true);
-						ratingbutton.setEnabled(false);
-						if (bewerten(e.hauptgericht, (int)bar1.getRating(), sfspd))
-							ratingbutton.setText("Bewertung abgegeben");
-					}
-				}
-			});
+				});
+			} else {
+				ratingbutton.setEnabled(false);
+				ratingbutton.setText("Bewertung noch nicht möglich");
+			}
 
 			final Button kommentieren = (Button)essen.findViewById(R.id.kommentieren);
 			final LinearLayout kommentar = (LinearLayout)essen.findViewById(R.id.kommentar);
@@ -192,21 +219,18 @@ public class SigfoodActivity extends Activity {
 			ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
 
 			for (final Hauptgericht beilage : e.beilagen) {
-				TextView beilage_bezeichnung = new TextView(getBaseContext(), null, android.R.attr.textAppearanceMedium); 
-				beilage_bezeichnung.setText(Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
-				essen.addView(beilage_bezeichnung);
+				//LinearLayout beilage_layout = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensabeilage, null);
+				LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View beilage_layout = inflater.inflate(R.layout.mensabeilage,null);
+				TextView titel2 = (TextView)beilage_layout.findViewById(R.id.beilageBezeichnung); 
+				titel2.setText("Beilage: " + Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
 
+				final RatingBar bar2 = (RatingBar)beilage_layout.findViewById(R.id.ratingBar2);
+				bar2.setMax(50);
+				bar2.setRating((int) (beilage.bewertung.schnitt * 10));
+				Log.d("Rating",""+(int) (beilage.bewertung.schnitt * 10));
 
-				final RatingBar bar2 = new RatingBar(this, null,android.R.attr.ratingBarStyle);
-				bar2.setIsIndicator(true);
-				bar2.setNumStars(5);
-				bar2.setMax(5);
-				bar2.setStepSize(1);
-				bar2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-				bar2.setRating((int) (beilage.bewertung.schnitt + 0.5f));
-				essen.addView(bar2);
-
-				final Button ratingbutton2 = new Button(this, null,android.R.attr.buttonStyleSmall);
+				final Button ratingbutton2 = (Button)beilage_layout.findViewById(R.id.button2);
 				ratingbutton2.setText("Beilage bewerten");
 				ratingbutton2.setOnClickListener(new Button.OnClickListener() {  
 					public void onClick(View v)
@@ -214,24 +238,28 @@ public class SigfoodActivity extends Activity {
 						if(bar2.isIndicator()) {
 							ratingbutton2.setText("Bewertung jetzt abgeben");
 							bar2.setIsIndicator(false);
+							bar2.setMax(5);
+							bar2.setProgress(0);
 						}
 						else {
 							bar2.setIsIndicator(true);
+							bar2.setMax(50);
+							bar2.setRating((int) (beilage.bewertung.schnitt * 10));
 							ratingbutton2.setEnabled(false);
 							if (bewerten(beilage, (int)bar2.getRating(), sfspd))
 								ratingbutton.setText("Bewertung abgegeben");
 						}
 					}
 				});
-				essen.addView(ratingbutton2);
 
-				TextView kommentare2 = new TextView(getBaseContext(), null, android.R.attr.textAppearanceSmall); 
+				TextView kommentare2 = (TextView)beilage_layout.findViewById(R.id.kommentare2); 
 				String tmp2 = "";
 				for(String s : beilage.kommentare) {
 					tmp2 += "\"" + Html.fromHtml(s) + "\"" + "\n";
 				}
 				kommentare2.setText(tmp2);
-				essen.addView(kommentare2);
+				
+				essen.addView(beilage_layout);
 			}
 
 

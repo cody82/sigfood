@@ -4,56 +4,35 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-	<View
-		android:layout_width="fill_parent"
-		android:layout_height="2dip"
-		android:background="#8080FF" />
     <TextView
-        android:id="@+id/ueberschrift"
+        android:id="@+id/beilageBezeichnung"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/btn_star" />
-
-    <TextView
-        android:id="@+id/hauptgerichtBezeichnung"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_gravity="left"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RatingBar
-        android:id="@+id/ratingBar1"
+        android:id="@+id/ratingBar2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="right"
         android:focusable="false"
         android:focusableInTouchMode="true"
         android:isIndicator="true"
         android:max="5"
+        android:maxHeight="57dp"
+        android:minHeight="57dip"
         android:numStars="5"
         android:progressDrawable="@drawable/ratingbar_full_yellow" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button2"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="right"
         android:text="Bewerten" />
-
-    <TextView
-        android:id="@+id/kommentare1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <LinearLayout
         android:id="@+id/kommentar"
@@ -94,11 +73,12 @@
             android:singleLine="false" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/kommentieren"
-        style="?android:attr/buttonStyleSmall"
+    <TextView
+        android:id="@+id/kommentare2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kommentieren" />
+        android:layout_gravity="right"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>
