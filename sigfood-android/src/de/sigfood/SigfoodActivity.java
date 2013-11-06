@@ -1,6 +1,5 @@
 package de.sigfood;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,14 +30,11 @@ import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -55,10 +51,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout.LayoutParams;
 
 public class SigfoodActivity extends Activity {
 	
@@ -103,18 +97,26 @@ public class SigfoodActivity extends Activity {
 	}
 	
 	SigfoodApi sigfood;
+	ProgressDialog dialog;
 	
 	public void fillspeiseplan(Date d) {
-
 		LinearLayout parent = (LinearLayout)this.findViewById(R.id.scroller);
-		TextView datum = (TextView)this.findViewById(R.id.datum);
 
 		/* First clear and show loading text */
-		datum.setText("Loading...");
 		parent.removeAllViews();
 
-		/* This actually downloads the plan, so can be rather costly */
-		sigfood = new SigfoodApi(d);
+		/* Start the download via a seperate thread */
+		dialog = ProgressDialog.show(this,"","Lade Speiseplan...");
+		SigfoodThread sft = new SigfoodThread(d,this);
+		sft.start();
+	}
+	
+	public void fillspeiseplanReturn(SigfoodApi sfa) {
+		LinearLayout parent = (LinearLayout)this.findViewById(R.id.scroller);
+		TextView datum = (TextView)this.findViewById(R.id.datum);
+		dialog.dismiss();
+		
+		sigfood = sfa;
 
 		/* Now start to fill plan and download pictures */
 		final Date sfspd = sigfood.speiseplandatum;
@@ -219,16 +221,13 @@ public class SigfoodActivity extends Activity {
 			ImageButton btn = (ImageButton)essen.findViewById(R.id.imageButton1);
 
 			for (final Hauptgericht beilage : e.beilagen) {
-				//LinearLayout beilage_layout = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensabeilage, null);
-				LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View beilage_layout = inflater.inflate(R.layout.mensabeilage,null);
+				LinearLayout beilage_layout = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mensabeilage, null);
 				TextView titel2 = (TextView)beilage_layout.findViewById(R.id.beilageBezeichnung); 
 				titel2.setText("Beilage: " + Html.fromHtml(beilage.bezeichnung) + "(" + beilage.bewertung.schnitt + "/" + beilage.bewertung.anzahl + "/" + e.hauptgericht.bewertung.stddev + ")");
 
 				final RatingBar bar2 = (RatingBar)beilage_layout.findViewById(R.id.ratingBar2);
 				bar2.setMax(50);
-				bar2.setRating((int) (beilage.bewertung.schnitt * 10));
-				Log.d("Rating",""+(int) (beilage.bewertung.schnitt * 10));
+				bar2.setProgress((int) (beilage.bewertung.schnitt * 10));
 
 				final Button ratingbutton2 = (Button)beilage_layout.findViewById(R.id.button2);
 				ratingbutton2.setText("Beilage bewerten");
@@ -236,7 +235,7 @@ public class SigfoodActivity extends Activity {
 					public void onClick(View v)
 					{
 						if(bar2.isIndicator()) {
-							ratingbutton2.setText("Bewertung jetzt abgeben");
+							ratingbutton2.setText("Bewertung abgeben");
 							bar2.setIsIndicator(false);
 							bar2.setMax(5);
 							bar2.setProgress(0);
@@ -244,10 +243,10 @@ public class SigfoodActivity extends Activity {
 						else {
 							bar2.setIsIndicator(true);
 							bar2.setMax(50);
-							bar2.setRating((int) (beilage.bewertung.schnitt * 10));
+							bar2.setProgress((int) (beilage.bewertung.schnitt * 10));
 							ratingbutton2.setEnabled(false);
 							if (bewerten(beilage, (int)bar2.getRating(), sfspd))
-								ratingbutton.setText("Bewertung abgegeben");
+								ratingbutton2.setText("Bewertung abgegeben");
 						}
 					}
 				});
@@ -282,26 +281,12 @@ public class SigfoodActivity extends Activity {
 					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
 					btn.setImageBitmap(bmImg);
 				}
-				try {
-					HttpURLConnection conn= (HttpURLConnection)myFileUrl.openConnection();
-					conn.setDoInput(true);
-					conn.connect();
-					//int length = conn.getContentLength();
-					//int[] bitmapData =new int[length];
-					//byte[] bitmapData2 =new byte[length];
-					InputStream is = conn.getInputStream();
-
-					Bitmap bmImg = BitmapFactory.decodeStream(is);
-					btn.setImageBitmap(bmImg);
-				} catch (IOException e1) {
-					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
-					btn.setImageBitmap(bmImg);
-				}
+				PictureThread pt = new PictureThread(myFileUrl,btn,this);
+				pt.start();
 			} else {
 				Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
 				btn.setImageBitmap(bmImg);
 			}
-
 
 			parent.addView(essen);
 		}
@@ -434,11 +419,9 @@ public class SigfoodActivity extends Activity {
 				httpMultipartClient.setRequestMethod("POST");
 				httpMultipartClient.send(this);
 			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				return false;
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 				return false;
 			}
@@ -502,10 +485,8 @@ public class SigfoodActivity extends Activity {
 			}
 
 		} catch (ClientProtocolException e1) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e1);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			throw new RuntimeException(e1);
 		}
 

@@ -20,10 +20,11 @@
         android:focusable="false"
         android:focusableInTouchMode="true"
         android:isIndicator="true"
-        android:max="5"
+        android:max="50"
         android:maxHeight="57dp"
         android:minHeight="57dip"
         android:numStars="5"
+        android:progress="30"
         android:progressDrawable="@drawable/ratingbar_full_yellow" />
 
     <Button
