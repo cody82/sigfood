@@ -5,16 +5,18 @@ import java.util.Date;
 public class SigfoodThread extends Thread {
 	Date d;
 	SigfoodApi sigfood;
-	SigfoodActivity ret;
+	SigfoodActivity act;
+	MenuFragment ret;
 	
-	public SigfoodThread(Date date, SigfoodActivity sfa) {
+	public SigfoodThread(Date date, SigfoodActivity sfa, MenuFragment frg) {
 		d = date;
-		ret = sfa;
+		act = sfa;
+		ret = frg;
 	}
 	
     public void run() {
     	sigfood = new SigfoodApi(d);
-        ret.runOnUiThread(new Runnable() {
+        act.runOnUiThread(new Runnable() {
             public void run() {
             	ret.fillspeiseplanReturn(sigfood);
             }

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="#202020"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/mainMealTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="right"
+            android:text="Gericht"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/mainMealPicture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Picture"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            tools:ignore="HardcodedText" />
+
+        <ProgressBar
+            android:id="@+id/mainMealPictureLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false" >
+
+            <TextView
+                android:id="@+id/mainMealLine"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="Linie X"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:ignore="HardcodedText" />
+
+            <RatingBar
+                android:id="@+id/mainMenuRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="0"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:isIndicator="true"
+                android:max="5"
+                android:numStars="5"
+                android:progressDrawable="@drawable/ratingbar_full_yellow" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
