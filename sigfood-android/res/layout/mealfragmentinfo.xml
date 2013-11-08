@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RatingBar
+        android:id="@+id/mealRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:focusable="false"
+        android:focusableInTouchMode="true"
+        android:isIndicator="true"
+        android:max="50"
+        android:numStars="5"
+        android:progressDrawable="@drawable/ratingbar_full_yellow" />
+
+    <RatingBar
+        android:id="@+id/mealRatingChoose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:focusable="false"
+        android:focusableInTouchMode="true"
+        android:isIndicator="false"
+        android:max="5"
+        android:numStars="5"
+        android:progress="0"
+        android:progressDrawable="@drawable/ratingbar_full_green"
+        android:rating="0"
+        android:stepSize="1"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/mealRatingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="0.0, 00 Bewertungen (0.0 Abw.)"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/mealRatingButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Bewerten"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/mealSidedishLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Beilagen"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:id="@+id/mealSidedish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/mealCommentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Neuester Kommentar"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:id="@+id/mealComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/mealCommentButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Mehr Kommentare"
+        tools:ignore="HardcodedText" />
+
+</LinearLayout>

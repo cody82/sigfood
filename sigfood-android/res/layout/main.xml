@@ -6,44 +6,10 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/mainHeader"
-        android:layout_width="fill_parent"
+    <include
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:background="#404040"
-        android:gravity="fill_horizontal"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/mainPrevDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:text="&lt;&lt;"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/mainDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="Lade Speiseplan..."
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/mainNextDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text=">>"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
+        layout="@layout/mainfragmentheader" />
 
     <ScrollView
         android:id="@+id/mainScroller"
@@ -60,20 +26,9 @@
 
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/mainLoading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" >
-
-        <ProgressBar
-            android:id="@+id/mainProgressIndicator"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1" />
-
-    </LinearLayout>
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/mainfragmentloader" />
 
 </LinearLayout>

@@ -84,9 +84,11 @@ public class MealFragment extends Fragment {
 		if (e.linie.equalsIgnoreCase("0")) linie.setText("Beilage");
 		else linie.setText("Linie " + e.linie);
 		
-		ImageButton img = (ImageButton)essen.findViewById(R.id.mealPicture);
+		final ImageButton img = (ImageButton)essen.findViewById(R.id.mealPicture);
+		Button btn = (Button)essen.findViewById(R.id.mealUpload);
 		ProgressBar load = (ProgressBar)essen.findViewById(R.id.mealPictureLoading);
 		img.setVisibility(View.GONE);
+		btn.setVisibility(View.GONE);
 		load.setVisibility(View.VISIBLE);
 
 		if (e.hauptgericht.bilder.size() > 0) {
@@ -103,6 +105,7 @@ public class MealFragment extends Fragment {
 			pt.start();
 		} else {
 			img.setVisibility(View.GONE);
+			btn.setVisibility(View.VISIBLE);
 			load.setVisibility(View.GONE);
 		}
 		
@@ -111,6 +114,13 @@ public class MealFragment extends Fragment {
                 public void onClick(View v2)
                 {
                         act.takePhoto(v2);
+                }
+        });		
+        btn.setTag(e);
+        btn.setOnClickListener(new Button.OnClickListener() {
+                public void onClick(View v2)
+                {
+                        act.takePhoto(img);
                 }
         });
 
