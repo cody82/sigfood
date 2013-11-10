@@ -71,22 +71,24 @@ public class MealFragment extends Fragment {
 		backMeal = null;
 		CommentFragment.setComments(e);
 		
-		LinearLayout essen = (LinearLayout)v.findViewById(R.id.mealList);
+		LinearLayout parent;
+		if (v.findViewById(R.id.mealList) instanceof LinearLayout) parent = (LinearLayout)v.findViewById(R.id.mealList);
+		else parent = (LinearLayout)v.findViewById(R.id.meal);
 
-		View scroller = (View)v.findViewById(R.id.meal);
-		scroller.setVisibility(View.VISIBLE);
+		//View scroller = (View)v.findViewById(R.id.meal);
+		parent.setVisibility(View.VISIBLE);
 		View note = (View)v.findViewById(R.id.mealNote);
 		note.setVisibility(View.GONE);
 		
-		TextView name = (TextView)essen.findViewById(R.id.mealTitle);
+		TextView name = (TextView)parent.findViewById(R.id.mealTitle);
 		name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
-		TextView linie = (TextView)essen.findViewById(R.id.mealLine);
+		TextView linie = (TextView)parent.findViewById(R.id.mealLine);
 		if (e.linie.equalsIgnoreCase("0")) linie.setText("Beilage");
 		else linie.setText("Linie " + e.linie);
 		
-		final ImageButton img = (ImageButton)essen.findViewById(R.id.mealPicture);
-		Button btn = (Button)essen.findViewById(R.id.mealUpload);
-		ProgressBar load = (ProgressBar)essen.findViewById(R.id.mealPictureLoading);
+		final ImageButton img = (ImageButton)parent.findViewById(R.id.mealPicture);
+		Button btn = (Button)parent.findViewById(R.id.mealUpload);
+		ProgressBar load = (ProgressBar)parent.findViewById(R.id.mealPictureLoading);
 		img.setVisibility(View.GONE);
 		btn.setVisibility(View.GONE);
 		load.setVisibility(View.VISIBLE);
@@ -124,13 +126,13 @@ public class MealFragment extends Fragment {
                 }
         });
 
-		final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.mealRating);
-		final RatingBar barr = (RatingBar)essen.findViewById(R.id.mealRatingChoose);
-		final Button ratingbutton = (Button)essen.findViewById(R.id.mealRatingButton);
+		final RatingBar bar1 = (RatingBar)parent.findViewById(R.id.mealRating);
+		final RatingBar barr = (RatingBar)parent.findViewById(R.id.mealRatingChoose);
+		final Button ratingbutton = (Button)parent.findViewById(R.id.mealRatingButton);
 		
 		bar1.setMax(50);
 		bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
-		((TextView) essen.findViewById(R.id.mealRatingText)).setText(e.hauptgericht.bewertung.schnitt+", "+e.hauptgericht.bewertung.anzahl+" Bewertungen ("+e.hauptgericht.bewertung.stddev+" Abw.)");
+		((TextView) parent.findViewById(R.id.mealRatingText)).setText(e.hauptgericht.bewertung.schnitt+", "+e.hauptgericht.bewertung.anzahl+" Bewertungen ("+e.hauptgericht.bewertung.stddev+" Abw.)");
 		
 		final Date sfspd = e.datumskopie;
         Calendar today = Calendar.getInstance();
@@ -204,7 +206,7 @@ public class MealFragment extends Fragment {
 			sidedishes.setVisibility(View.GONE);
 		}
 
-		LinearLayout comments = (LinearLayout)essen.findViewById(R.id.mealComment);
+		LinearLayout comments = (LinearLayout)parent.findViewById(R.id.mealComment);
 		comments.removeAllViews();
 		
 		if (e.hauptgericht.kommentare.size()>0) {

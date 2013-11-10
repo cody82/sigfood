@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ public class MenuFragment extends Fragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		if (v == null) {
 			act = (SigfoodActivity) getActivity();
-			v = inflater.inflate(R.layout.main, null);
+			v = inflater.inflate(R.layout.menu, null);
 	
 			LinearLayout tv = (LinearLayout)v.findViewById(R.id.mainList);
 			tv.removeAllViews();		
@@ -126,8 +127,25 @@ public class MenuFragment extends Fragment {
 		next_date.setEnabled(sigfood.naechstertag != null);
 		Button prev_date = (Button)v.findViewById(R.id.mainPrevDate);
 		prev_date.setEnabled(sigfood.vorherigertag != null);
+		
+		int rowcounter = 0;
+		LinearLayout current = null;
+		
+		int rows = 0;
+		ProgressBar test = null;
+		test = (ProgressBar)v.findViewById(R.id.menuRowCount2);
+		if (test!=null) rows=2;
+		test = null;
+		test = (ProgressBar)v.findViewById(R.id.menuRowCount3);
+		if (test!=null) rows=3;
+		if (rows<=0) rows=1;
 
 		for (final MensaEssen e : sigfood.essen) {
+			if (current==null && rows>1) {
+				Log.d("Layout",rows+" Rows");
+				if (rows==2) current = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.mainrow2, null);
+				if (rows==3) current = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.mainrow3, null);
+			}
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.mainmeal, null);
 			TextView name = (TextView)essen.findViewById(R.id.mainMealTitle);
 			name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
@@ -167,8 +185,21 @@ public class MenuFragment extends Fragment {
 				}
 			});
 			
-			parent.addView(essen);
+			if (rows==1 || current==null) parent.addView(essen);
+			else {
+				Log.d("Layout",rowcounter+"");
+				if (rowcounter==0) ((LinearLayout)current.findViewById(R.id.menuField1)).addView(essen);
+				else if (rowcounter==1) ((LinearLayout)current.findViewById(R.id.menuField2)).addView(essen);
+				else if (rowcounter==2) ((LinearLayout)current.findViewById(R.id.menuField3)).addView(essen);
+				rowcounter++;
+				if (rowcounter>=rows) {
+					rowcounter=0;
+					parent.addView(current);
+					current=null;
+				}
+			}
 		}
+		if (current!=null) parent.addView(current);
 	}
 
 	boolean kommentieren(Hauptgericht e, Date tag, String name, String kommentar) {
