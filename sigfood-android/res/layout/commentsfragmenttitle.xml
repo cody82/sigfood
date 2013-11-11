@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/commentsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:text="Gericht"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/commentsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        android:text="0 Kommentare"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:id="@+id/commentsForm"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/commentsFormNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:ignore="HardcodedText" />
+
+        <EditText
+            android:id="@+id/commentsFormName"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            android:visibility="visible" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/commentsFormTextLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kommentar"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:ignore="HardcodedText" />
+
+        <EditText
+            android:id="@+id/commentsFormText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:singleLine="false" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/commentsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="Kommentieren"
+        tools:ignore="HardcodedText" />
+
+</LinearLayout>

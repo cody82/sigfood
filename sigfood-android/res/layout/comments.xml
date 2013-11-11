@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <include
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/mainfragmentheader" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        layout="@layout/commentsfragmentloader" />
 
-    <ScrollView
-        android:id="@+id/mainScroller"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/commentsView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:visibility="gone" >
-
-        <LinearLayout
-            android:id="@+id/mainList"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-    </ScrollView>
 
         <include
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/mainfragmentloader" />
+            android:layout_height="wrap_content"
+            layout="@layout/commentsfragmenttitle" />
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/commentsfragmentlist" />
+    </LinearLayout>
 
 </LinearLayout>
