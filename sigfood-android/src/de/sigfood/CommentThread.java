@@ -46,6 +46,7 @@ public class CommentThread extends Thread {
 			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
 			nameValuePairs.add(new BasicNameValuePair("kommentar", k));
 			nameValuePairs.add(new BasicNameValuePair("nick", n));
+			nameValuePairs.add(new BasicNameValuePair("frage", "23"));
 
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
