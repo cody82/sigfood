@@ -6,19 +6,17 @@ public class SigfoodThread extends Thread {
 	Date d;
 	SigfoodApi sigfood;
 	SigfoodActivity act;
-	MenuFragment ret;
 	
-	public SigfoodThread(Date date, SigfoodActivity sfa, MenuFragment frg) {
+	public SigfoodThread(Date date, SigfoodActivity sfa) {
 		d = date;
 		act = sfa;
-		ret = frg;
 	}
 	
     public void run() {
     	sigfood = new SigfoodApi(d);
         act.runOnUiThread(new Runnable() {
             public void run() {
-            	ret.fillspeiseplanReturn(sigfood);
+            	act.fillspeiseplanReturn(sigfood);
             }
         });
     }

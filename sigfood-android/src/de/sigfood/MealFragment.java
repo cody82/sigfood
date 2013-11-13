@@ -43,19 +43,19 @@ import android.widget.TextView;
 
 public class MealFragment extends Fragment {
 	
-	public static SigfoodActivity act;
-	public static View v;
-	public static MensaEssen backMeal;
+	public MealActivity act;
+	public View v;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+		act = (MealActivity) getActivity();
 		if (v == null) {
-			act = (SigfoodActivity) getActivity();
 			v = inflater.inflate(R.layout.meal, null);
 		} else {
 			((ViewGroup) v.getParent()).removeView(v);
 		}
+		act.setMF(this);
 		return v;
 	}
  
@@ -67,10 +67,7 @@ public class MealFragment extends Fragment {
 	
 	SigfoodApi sigfood;
 	
-	public static void setMeal(final MensaEssen e) {
-		backMeal = null;
-		CommentFragment.setComments(e);
-		
+	public void setMeal(final MensaEssen e) {		
 		LinearLayout parent;
 		if (v.findViewById(R.id.mealList) instanceof LinearLayout) parent = (LinearLayout)v.findViewById(R.id.mealList);
 		else parent = (LinearLayout)v.findViewById(R.id.meal);
@@ -107,7 +104,7 @@ public class MealFragment extends Fragment {
 			pt.start();
 		} else {
 			img.setVisibility(View.GONE);
-			btn.setVisibility(View.VISIBLE);
+			if (!e.linie.equalsIgnoreCase("0")) btn.setVisibility(View.VISIBLE);
 			load.setVisibility(View.GONE);
 		}
 		
@@ -194,8 +191,7 @@ public class MealFragment extends Fragment {
 						bei.linie = "0";
 						bei.hauptgericht = beilage;
 						bei.datumskopie = e.datumskopie;
-						setMeal(bei);
-						backMeal = e;
+						act.setMeal(bei,e);
 					}
 				});
 				
@@ -227,12 +223,12 @@ public class MealFragment extends Fragment {
 		commentbtn.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v2)
 			{
-				act.getSupportActionBar().setSelectedNavigationItem(2);
+				act.getSupportActionBar().setSelectedNavigationItem(1);
 			}
 		});
 	}
 	
-	static boolean bewerten(Hauptgericht e, int stars, Date tag) {
+	boolean bewerten(Hauptgericht e, int stars, Date tag) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
 

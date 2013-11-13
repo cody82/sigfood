@@ -33,18 +33,19 @@ import android.widget.TextView;
 
 public class CommentFragment extends Fragment {
 	
-	public static SigfoodActivity act;
-	public static View v;
+	public MealActivity act;
+	public View v;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+		act = (MealActivity) getActivity();
 		if (v == null) {
-			act = (SigfoodActivity) getActivity();
 			v = inflater.inflate(R.layout.comments, null);
 		} else {
 			((ViewGroup) v.getParent()).removeView(v);
 		}
+		act.setCF(this);
 		return v;
 	}
  
@@ -56,7 +57,7 @@ public class CommentFragment extends Fragment {
 	
 	SigfoodApi sigfood;
 	
-	public static void setComments(final MensaEssen e) {
+	public void setComments(final MensaEssen e) {
 		if (v==null) return;
 		
 		View scroller = (View)v.findViewById(R.id.commentsView);
@@ -108,7 +109,7 @@ public class CommentFragment extends Fragment {
 		});
 	}
 
-	static boolean kommentieren(Hauptgericht e, Date tag, String name, String kommentar) {
+	boolean kommentieren(Hauptgericht e, Date tag, String name, String kommentar) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
 
