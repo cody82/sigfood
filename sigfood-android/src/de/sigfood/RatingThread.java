@@ -42,6 +42,7 @@ public class RatingThread extends Thread {
 			nameValuePairs.add(new BasicNameValuePair("datum",
 					                                  String.format("%tY-%tm-%td", t, t, t)));
 			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
+			nameValuePairs.add(new BasicNameValuePair("wertung", Integer.toString(s)));
 
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
