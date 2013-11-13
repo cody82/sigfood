@@ -31,7 +31,7 @@
         android:numStars="5"
         android:progress="0"
         android:progressDrawable="@drawable/ratingbar_full_green"
-        android:rating="0"
+        android:rating="5"
         android:stepSize="1"
         android:visibility="gone" />
 
