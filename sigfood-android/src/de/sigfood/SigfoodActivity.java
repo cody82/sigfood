@@ -5,278 +5,216 @@ package de.sigfood;
 // Handles the fragments and picture taking/uploading
 // --------------------------------------------------
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
+import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
-import com.buzzingandroid.tabswipe.TabSwipeActivity;
-
-public class SigfoodActivity extends TabSwipeActivity { 
+public class SigfoodActivity extends Activity { 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
- 
-        // Add each Fragment as Tab
-        addTab("Speiseplan", MenuFragment.class, MenuFragment.createBundle("Speiseplan"));
-        addTab("Gericht", MealFragment.class, MealFragment.createBundle("Gericht"));
-        addTab("Kommentare", CommentFragment.class, CommentFragment.createBundle("Kommentare"));
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.menu);
+	
+		LinearLayout tv = (LinearLayout)findViewById(R.id.mainList);
+		tv.removeAllViews();		
+	
+		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
+		Button next_date = (Button)findViewById(R.id.mainNextDate);
+			
+		next_date.setOnClickListener(new Button.OnClickListener() {  
+			public void onClick(View v2)
+			{
+				if (sigfood != null) {
+					if (sigfood.naechstertag != null) {
+						fillspeiseplan(sigfood.naechstertag);
+					}
+				}
+			}
+		});
+		prev_date.setOnClickListener(new Button.OnClickListener() {  
+			public void onClick(View v2)
+			{
+				if (sigfood != null) {
+					if (sigfood.vorherigertag != null) {
+						fillspeiseplan(sigfood.vorherigertag);
+					}
+				}
+			}
+		});
+			
+		fillspeiseplan(null);
     }
+	
+	SigfoodApi sigfood;
+	
+	public void fillspeiseplan(Date d) {
+		/* First clear and show loading indicator */
+		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
+		parent.removeAllViews();
 
-	@Override
-	public void onBackPressed() {
-		// Handle back presses. Here, we do this based on location and variables instead of using the stack
-	    if (getSupportActionBar().getSelectedNavigationIndex()==2) {
-	    	getSupportActionBar().setSelectedNavigationItem(1);
-	    } else if (getSupportActionBar().getSelectedNavigationIndex()==1) {
-	    	if (MealFragment.backMeal!=null) {
-	    		MealFragment.setMeal(MealFragment.backMeal);
-	    		MealFragment.backMeal = null;
-	    	} else getSupportActionBar().setSelectedNavigationItem(0);
-	    } else {
-	        super.onBackPressed();
-	    }
+		View scroller = (View)findViewById(R.id.mainScroller);
+		scroller.setVisibility(View.GONE);
+		View loader = (View)findViewById(R.id.mainLoading);
+		loader.setVisibility(View.VISIBLE);
+
+		/* Start the download via a seperate thread */
+		SigfoodThread sft = new SigfoodThread(d,this);
+		sft.start();
 	}
+	
+	public void fillspeiseplanReturn(SigfoodApi sfa) {
+		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
+		TextView datum = (TextView)findViewById(R.id.mainDate);
 
-	public class UploadPhotoTaskParams {
-		public UploadPhotoTaskParams(MensaEssen e, Date d, String filepath) {
-			this.e=e;
-			this.d=d;
-			this.filepath=filepath;
+		View scroller = (View)findViewById(R.id.mainScroller);
+		scroller.setVisibility(View.VISIBLE);
+		View loader = (View)findViewById(R.id.mainLoading);
+		loader.setVisibility(View.GONE);
+		
+		sigfood = sfa;
+
+		/* Now start to fill plan and download pictures */
+		final Date sfspd = sigfood.speiseplandatum;
+		datum.setText(String.format("%tA, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
+		
+		Button next_date = (Button)findViewById(R.id.mainNextDate);
+		next_date.setEnabled(sigfood.naechstertag != null);
+		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
+		prev_date.setEnabled(sigfood.vorherigertag != null);
+		
+		int rowcounter = 0;
+		LinearLayout current = null;
+		
+		int rows = 0;
+		ProgressBar test = null;
+		test = (ProgressBar)findViewById(R.id.menuRowCount2);
+		if (test!=null) rows=2;
+		test = null;
+		test = (ProgressBar)findViewById(R.id.menuRowCount3);
+		if (test!=null) rows=3;
+		if (rows<=0) rows=1;
+
+		for (final MensaEssen e : sigfood.essen) {
+			if (current==null && rows>1) {
+				if (rows==2) current = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow2, null);
+				if (rows==3) current = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow3, null);
+			}
+			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainmeal, null);
+			TextView name = (TextView)essen.findViewById(R.id.mainMealTitle);
+			name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
+			TextView linie = (TextView)essen.findViewById(R.id.mainMealLine);
+			linie.setText("Linie " + e.linie);
+
+			final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.mainMenuRating);
+			bar1.setMax(50);
+			bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
+
+			ImageView img = (ImageView)essen.findViewById(R.id.mainMealPicture);
+			ProgressBar load = (ProgressBar)essen.findViewById(R.id.mainMealPictureLoading);
+
+			if (e.hauptgericht.bilder.size() > 0) {
+				Random rng = new Random();
+				int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
+				URL myFileUrl =null;
+				try {
+					myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=320");
+				} catch (MalformedURLException e1) {
+					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
+					img.setImageBitmap(bmImg);
+				}
+				PictureThread pt = new PictureThread(myFileUrl,img,load,this);
+				pt.start();
+			} else {
+				Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
+				img.setImageBitmap(bmImg);
+				load.setVisibility(View.GONE);
+			}
+			
+			essen.setOnClickListener(new Button.OnClickListener() {  
+				public void onClick(View v2)
+				{
+					startMeal(e);
+				}
+			});
+			
+			if (rows==1 || current==null) parent.addView(essen);
+			else {
+				if (rowcounter==0) ((LinearLayout)current.findViewById(R.id.menuField1)).addView(essen);
+				else if (rowcounter==1) ((LinearLayout)current.findViewById(R.id.menuField2)).addView(essen);
+				else if (rowcounter==2) ((LinearLayout)current.findViewById(R.id.menuField3)).addView(essen);
+				rowcounter++;
+				if (rowcounter>=rows) {
+					rowcounter=0;
+					parent.addView(current);
+					current=null;
+				}
+			}
 		}
-		public MensaEssen e;
-		public Date d;
-		public String filepath;
+		if (current!=null) parent.addView(current);
 	}
-	
-	private ProgressDialog pd;
-	void uploadPic(MensaEssen e, Date d, String filepath) {
-		pd = ProgressDialog.show(this, "Das Foto wird gerade hochgeladen...", "Bitte warten...", false, false);
-		pd.setMax(100);
-		UploadPhotoTask upload = new UploadPhotoTask();
-		upload.execute(new UploadPhotoTaskParams(e,d,filepath));
+
+	protected void startMeal(MensaEssen e) {
+		Intent intent = new Intent(this, MealActivity.class);
+		intent.putExtra("de.sigfood.mealinfo", e);
+		startActivity(intent);
 	}
-	
-	void uploadPic2(MensaEssen e, Date d, String filepath) {
-		// Create a new HttpClient and Post Header
+
+	boolean bewerten(Hauptgericht e, int stars, Date tag) {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
 
 		try {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+			nameValuePairs.add(new BasicNameValuePair("do", "1"));
+			nameValuePairs.add(new BasicNameValuePair("datum",
+					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
+			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
 
-			MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);  
-			multipartEntity.addPart("do", new StringBody("4"));
-			multipartEntity.addPart("beilagenid", new StringBody("-1"));
-			multipartEntity.addPart("datum", new StringBody(String.format("%tY-%tm-%td", d, d, d)));
-			multipartEntity.addPart("gerid", new StringBody(Integer.toString(e.hauptgericht.id)));
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-			File f = new File(filepath);
-			multipartEntity.addPart("newimg", new FileBody(f));
-			httppost.setEntity(multipartEntity);
-
-
-			// Execute HTTP Post Request
 			HttpResponse response = httpclient.execute(httppost);
 			if (response.getStatusLine() == null) {
-				throw new RuntimeException("nostatusline");
+				return false;
 			} else {
 				if (response.getStatusLine().getStatusCode() != 200) {
-					throw new RuntimeException("badstatuscode");
+					return false;
 				}
 			}
 
 		} catch (ClientProtocolException e1) {
-			throw new RuntimeException(e1);
+			return false;
 		} catch (IOException e1) {
-			throw new RuntimeException(e1);
+			return false;
 		}
 
-	}
-	
-	public class UploadPhotoTask extends AsyncTask<UploadPhotoTaskParams, Integer, Boolean> implements HttpMultipartClient.ProgressListener{
-
-		@Override
-		protected Boolean doInBackground(UploadPhotoTaskParams... arg0) {
-			HttpMultipartClient httpMultipartClient = new HttpMultipartClient("www.sigfood.de", "/", 80);
-			FileInputStream fis;
-			try {
-				fis = new FileInputStream(new File(arg0[0].filepath));
-				httpMultipartClient.addFile("sigfood.jpg", fis, fis.available());
-				httpMultipartClient.addField("do", "4");
-				httpMultipartClient.addField("beilagenid", "-1");
-				httpMultipartClient.addField("datum", String.format("%tY-%tm-%td", arg0[0].d, arg0[0].d, arg0[0].d));
-				httpMultipartClient.addField("gerid", Integer.toString(arg0[0].e.hauptgericht.id));
-				httpMultipartClient.setRequestMethod("POST");
-				httpMultipartClient.send(this);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-				return false;
-			} catch (IOException e2) {
-				e2.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-		@Override
-	     protected void onProgressUpdate(Integer... progress) {
-	         pd.setProgress(progress[0]);
-	         pd.setMessage(progress[0].toString() + " Bytes übertragen.");
-	     }
-
-		@Override
-	     protected void onPostExecute(Boolean result) {
-			pd.dismiss();
-			if(result)
-				Toast.makeText(SigfoodActivity.this, "Upload done" ,Toast.LENGTH_LONG).show();
-			else
-				Toast.makeText(SigfoodActivity.this, "Failed to load or upload", Toast.LENGTH_SHORT).show();
-	     }
-
-		public void transferred(int bytes) {
-			this.publishProgress(bytes);
-		}
-
-	}
-
-	// -------------------------------------------------------------
-	// Code for taking and uploading pictures (used in MealFragment)
-	// -------------------------------------------------------------
-	
-	private Uri imageUri;
-	final int TAKE_PICTURE = 19238;
-	final int PICK_FROM_FILE = 19239;
-
-	ImageButton phototarget;
-
-	public void takePhoto(View v) {
-		ImageButton btn = (ImageButton)v;
-		phototarget = btn;
-
-		final String[] items = new String[] { "Select from file", "Take picture"};
-		ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.select_dialog_item, items);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Select Image");
-		builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
-			public void onClick( DialogInterface dialog, int item ) {
-				if (item == 0) {
-					Intent intent = new Intent();
-
-	                intent.setType("image/*");
-	                intent.setAction(Intent.ACTION_GET_CONTENT);
-
-	                startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_FROM_FILE);
-				} else {
-					Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-					File photo = new File(Environment.getExternalStorageDirectory(), "sigfood.jpg");
-					intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photo));
-					imageUri = Uri.fromFile(photo);
-					startActivityForResult(intent, TAKE_PICTURE);
-
-					dialog.cancel();
-				}
-			}
-		} );
-
-		final AlertDialog dialog = builder.create();
-		dialog.show();
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == Activity.RESULT_OK) {
-			Uri selectedImage = null;
-			switch (requestCode) {
-			case TAKE_PICTURE:
-				selectedImage = imageUri;
-				break;
-			case PICK_FROM_FILE:
-				selectedImage = data.getData();
-				break;
-			}
-			if (selectedImage != null) {
-				this.getContentResolver().notifyChange(selectedImage, null);
-				ImageView imageView = phototarget;
-				String path = "";
-				try {
-					path = getRealPathFromURI(selectedImage); /* Try to resolve content:// crap URLs */
-					if (path == null) { /* Oups, that failed, so... */
-						path = selectedImage.getPath(); /* just take the path part of URL */
-					}
-					Bitmap bitmap = BitmapFactory.decodeFile(path);
-					
-					int w = bitmap.getWidth();
-					int h = bitmap.getHeight();
-					float aspect = (float)w/(float)h;
-					if(w > 800 || h > 600) {
-						File file_resized = new File(Environment.getExternalStorageDirectory(), "sigfood_resized.jpg");
-						Bitmap bitmap_resized = Bitmap.createScaledBitmap(bitmap, 800, (int)(800.0f / aspect), false);
-					    FileOutputStream out = new FileOutputStream(file_resized);
-					    bitmap_resized.compress(Bitmap.CompressFormat.JPEG, 85, out);
-					    long oldsize = new File(path).length();
-					    Log.i("de.sigfood", "resize: " + w + ", " + h + ", " + oldsize + "->" + file_resized.length());
-					    if(file_resized.length() < oldsize)
-					    	path = file_resized.getPath();
-					}
-					
-					imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 320, 200, false));
-					uploadPic((MensaEssen)phototarget.getTag(),
-							  ((MensaEssen)phototarget.getTag()).datumskopie,
-							  path);
-					//Toast.makeText(this, "Upload done" ,Toast.LENGTH_LONG).show();
-				} catch (Exception e) {
-					//Toast.makeText(this, "Failed to load or upload" + path, Toast.LENGTH_SHORT).show();
-					Log.e("Camera", e.toString());
-				}
-			}
-		}
-	}
-
-	/* I seriously haven't got the slightest clue what this does, it's copied from
-	 * some howto. The more interesting question is why I even need this crap,
-	 * and why there are no more sensible functions in the API, like
-	 * JUSTGIVEMETHEFUCKINGPATHOFTHATCONTENTCRAP()
-	 */
-	public String getRealPathFromURI(Uri contentUri) {
-		String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-        if (cursor == null) {
-        	return null;
-        }
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+		return true;
 	}
 }

@@ -7,30 +7,17 @@ package de.sigfood;
 // Links to CommentFragment
 // ----------------------------------------
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,19 +30,19 @@ import android.widget.TextView;
 
 public class MealFragment extends Fragment {
 	
-	public static SigfoodActivity act;
-	public static View v;
-	public static MensaEssen backMeal;
+	public MealActivity act;
+	public View v;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+		act = (MealActivity) getActivity();
 		if (v == null) {
-			act = (SigfoodActivity) getActivity();
 			v = inflater.inflate(R.layout.meal, null);
 		} else {
 			((ViewGroup) v.getParent()).removeView(v);
 		}
+		act.setMF(this);
 		return v;
 	}
  
@@ -67,10 +54,7 @@ public class MealFragment extends Fragment {
 	
 	SigfoodApi sigfood;
 	
-	public static void setMeal(final MensaEssen e) {
-		backMeal = null;
-		CommentFragment.setComments(e);
-		
+	public void setMeal(final MensaEssen e) {		
 		LinearLayout parent;
 		if (v.findViewById(R.id.mealList) instanceof LinearLayout) parent = (LinearLayout)v.findViewById(R.id.mealList);
 		else parent = (LinearLayout)v.findViewById(R.id.meal);
@@ -107,7 +91,7 @@ public class MealFragment extends Fragment {
 			pt.start();
 		} else {
 			img.setVisibility(View.GONE);
-			btn.setVisibility(View.VISIBLE);
+			if (!e.linie.equalsIgnoreCase("0")) btn.setVisibility(View.VISIBLE);
 			load.setVisibility(View.GONE);
 		}
 		
@@ -161,9 +145,8 @@ public class MealFragment extends Fragment {
                                 		bar1.setVisibility(View.VISIBLE);
                                 	    barr.setVisibility(View.GONE);
                                     	ratingbutton.setEnabled(false);
-                                        Log.d("Rating",(int)barr.getRating()+"");
-                                        if (bewerten(e.hauptgericht, (int)barr.getRating(), sfspd))
-                                                ratingbutton.setText("Bewertet mit "+(int)barr.getRating()+" Stern"+(((int)barr.getRating()==1) ? "" : "en"));
+                                		RatingThread rt = new RatingThread(e.hauptgericht,(int)barr.getRating(),sfspd,ratingbutton,act);
+                                		rt.start();
                                 }
                         }
                 });
@@ -194,8 +177,7 @@ public class MealFragment extends Fragment {
 						bei.linie = "0";
 						bei.hauptgericht = beilage;
 						bei.datumskopie = e.datumskopie;
-						setMeal(bei);
-						backMeal = e;
+						act.setMeal(bei,e);
 					}
 				});
 				
@@ -227,39 +209,8 @@ public class MealFragment extends Fragment {
 		commentbtn.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v2)
 			{
-				act.getSupportActionBar().setSelectedNavigationItem(2);
+				act.getSupportActionBar().setSelectedNavigationItem(1);
 			}
 		});
-	}
-	
-	static boolean bewerten(Hauptgericht e, int stars, Date tag) {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
-
-		try {
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
-			nameValuePairs.add(new BasicNameValuePair("do", "1"));
-			nameValuePairs.add(new BasicNameValuePair("datum",
-					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
-			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
-
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpResponse response = httpclient.execute(httppost);
-			if (response.getStatusLine() == null) {
-				return false;
-			} else {
-				if (response.getStatusLine().getStatusCode() != 200) {
-					return false;
-				}
-			}
-
-		} catch (ClientProtocolException e1) {
-			return false;
-		} catch (IOException e1) {
-			return false;
-		}
-
-		return true;
 	}
 }

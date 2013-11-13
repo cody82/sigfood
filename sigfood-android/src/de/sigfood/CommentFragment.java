@@ -33,18 +33,19 @@ import android.widget.TextView;
 
 public class CommentFragment extends Fragment {
 	
-	public static SigfoodActivity act;
-	public static View v;
+	public MealActivity act;
+	public View v;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+		act = (MealActivity) getActivity();
 		if (v == null) {
-			act = (SigfoodActivity) getActivity();
 			v = inflater.inflate(R.layout.comments, null);
 		} else {
 			((ViewGroup) v.getParent()).removeView(v);
 		}
+		act.setCF(this);
 		return v;
 	}
  
@@ -56,7 +57,7 @@ public class CommentFragment extends Fragment {
 	
 	SigfoodApi sigfood;
 	
-	public static void setComments(final MensaEssen e) {
+	public void setComments(final MensaEssen e) {
 		if (v==null) return;
 		
 		View scroller = (View)v.findViewById(R.id.commentsView);
@@ -94,48 +95,12 @@ public class CommentFragment extends Fragment {
                             String name = ((EditText)commentform.findViewById(R.id.commentsFormName)).getText().toString();
                             String text = ((EditText)commentform.findViewById(R.id.commentsFormText)).getText().toString();
                             if(name.length() > 0 && text.length() > 0) {
-                                    if(kommentieren(e.hauptgericht, e.datumskopie, name, text)) {
-                                    		commentbtn.setText("Kommentar abgegeben");
-                                            commentbtn.setEnabled(false);
-                                    		commentform.setVisibility(View.GONE);
-                                    		comments.setVisibility(View.VISIBLE);
-                                            return;
-                                    }
+                            		commentbtn.setEnabled(false);
+                        			CommentThread rt = new CommentThread(e.hauptgericht,e.datumskopie,name,text,commentbtn,act);
+                        			rt.start();
                             }
-                            commentbtn.setText("Kommentieren fehlgeschlagen");
                     }
             }
 		});
-	}
-
-	static boolean kommentieren(Hauptgericht e, Date tag, String name, String kommentar) {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost("http://www.sigfood.de/");
-
-		try {
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
-			nameValuePairs.add(new BasicNameValuePair("do", "2"));
-			nameValuePairs.add(new BasicNameValuePair("datum",
-					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
-			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
-
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpResponse response = httpclient.execute(httppost);
-			if (response.getStatusLine() == null) {
-				return false;
-			} else {
-				if (response.getStatusLine().getStatusCode() != 200) {
-					return false;
-				}
-			}
-
-		} catch (ClientProtocolException e1) {
-			return false;
-		} catch (IOException e1) {
-			return false;
-		}
-
-		return true;
 	}
 }

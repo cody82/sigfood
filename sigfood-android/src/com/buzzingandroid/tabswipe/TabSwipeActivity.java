@@ -66,6 +66,10 @@ public abstract class TabSwipeActivity extends SherlockFragmentActivity {
     protected void addTab(CharSequence title, Class<? extends Fragment> fragmentClass, Bundle args ) {
         adapter.addTab( title, fragmentClass, args );
     }
+    
+    protected Fragment getTab(int id) {
+        return adapter.getItem(id);
+    }
   
     private static class TabsAdapter extends FragmentPagerAdapter implements TabListener, ViewPager.OnPageChangeListener {
   

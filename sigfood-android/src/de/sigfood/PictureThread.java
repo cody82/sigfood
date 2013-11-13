@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
@@ -14,18 +15,18 @@ import android.widget.ProgressBar;
 
 public class PictureThread extends Thread {
 	URL url;
-	SigfoodActivity act;
+	Activity act;
 	ImageView img;
 	ImageButton btn;
 	ProgressBar load;
 	
-	public PictureThread(URL u, ImageView i, ProgressBar l, SigfoodActivity sfa) {
+	public PictureThread(URL u, ImageView i, ProgressBar l, Activity sfa) {
 		url = u;
 		act = sfa;
 		img = i;
 		load = l;
 	}
-	public PictureThread(URL u, ImageButton i, ProgressBar l, SigfoodActivity sfa) {
+	public PictureThread(URL u, ImageButton i, ProgressBar l, Activity sfa) {
 		url = u;
 		act = sfa;
 		btn = i;
