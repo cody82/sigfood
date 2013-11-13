@@ -28,7 +28,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -125,7 +124,6 @@ public class SigfoodActivity extends Activity {
 
 		for (final MensaEssen e : sigfood.essen) {
 			if (current==null && rows>1) {
-				Log.d("Layout",rows+" Rows");
 				if (rows==2) current = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow2, null);
 				if (rows==3) current = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow3, null);
 			}
@@ -169,7 +167,6 @@ public class SigfoodActivity extends Activity {
 			
 			if (rows==1 || current==null) parent.addView(essen);
 			else {
-				Log.d("Layout",rowcounter+"");
 				if (rowcounter==0) ((LinearLayout)current.findViewById(R.id.menuField1)).addView(essen);
 				else if (rowcounter==1) ((LinearLayout)current.findViewById(R.id.menuField2)).addView(essen);
 				else if (rowcounter==2) ((LinearLayout)current.findViewById(R.id.menuField3)).addView(essen);

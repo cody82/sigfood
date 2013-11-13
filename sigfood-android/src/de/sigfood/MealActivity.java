@@ -274,7 +274,6 @@ public class MealActivity extends TabSwipeActivity {
 					    FileOutputStream out = new FileOutputStream(file_resized);
 					    bitmap_resized.compress(Bitmap.CompressFormat.JPEG, 85, out);
 					    long oldsize = new File(path).length();
-					    Log.i("de.sigfood", "resize: " + w + ", " + h + ", " + oldsize + "->" + file_resized.length());
 					    if(file_resized.length() < oldsize)
 					    	path = file_resized.getPath();
 					}
