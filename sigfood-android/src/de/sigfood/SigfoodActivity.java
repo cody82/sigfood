@@ -289,6 +289,9 @@ public class SigfoodActivity extends Activity {
 			nameValuePairs.add(new BasicNameValuePair("datum",
 					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
 			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
+			nameValuePairs.add(new BasicNameValuePair("kommentar", kommentar));
+			nameValuePairs.add(new BasicNameValuePair("nick", name));
+			nameValuePairs.add(new BasicNameValuePair("frage", "23"));
 
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -320,6 +323,7 @@ public class SigfoodActivity extends Activity {
 			nameValuePairs.add(new BasicNameValuePair("datum",
 					                                  String.format("%tY-%tm-%td", tag, tag, tag)));
 			nameValuePairs.add(new BasicNameValuePair("gerid", Integer.toString(e.id)));
+			nameValuePairs.add(new BasicNameValuePair("wertung", Integer.toString(stars)));
 
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
