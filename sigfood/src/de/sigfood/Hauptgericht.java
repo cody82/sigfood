@@ -8,7 +8,7 @@ public class Hauptgericht implements Serializable {
 	
 	public int id;
 	public String bezeichnung;
-	public ArrayList<String> kommentare = new ArrayList<String>();
+	public ArrayList<Kommentar> kommentare = new ArrayList<Kommentar>();
 	public Bewertung bewertung = new Bewertung();
 	public ArrayList<Integer> bilder = new ArrayList<Integer>();
 }

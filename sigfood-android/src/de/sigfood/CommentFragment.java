@@ -72,10 +72,14 @@ public class CommentFragment extends Fragment {
 		final LinearLayout comments = (LinearLayout)v.findViewById(R.id.commentsList);
 		comments.removeAllViews();
 
-		for (String s : e.hauptgericht.kommentare) {
+		for (Kommentar k : e.hauptgericht.kommentare) {
 			LinearLayout comment = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.comment, null);
 			TextView text = (TextView)comment.findViewById(R.id.commentText); 
-			text.setText(Html.fromHtml(s));
+			text.setText(Html.fromHtml(k.text));
+			TextView nick = (TextView)comment.findViewById(R.id.nickText);
+			nick.setText(Html.fromHtml(k.nick));
+			TextView date = (TextView)comment.findViewById(R.id.dateText); 
+			date.setText(Html.fromHtml(k.datum));
 			
 			comments.addView(comment);
 		}

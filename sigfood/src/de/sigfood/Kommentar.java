@@ -7,4 +7,5 @@ public class Kommentar implements Serializable {
 	
 	public String text;
 	public String nick;
+	public String datum;
 }

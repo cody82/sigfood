@@ -197,7 +197,11 @@ public class MealFragment extends Fragment {
 
 			LinearLayout comment = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.comment, null);
 			TextView text = (TextView)comment.findViewById(R.id.commentText); 
-			text.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0)));
+			text.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0).text));
+			TextView nick = (TextView)comment.findViewById(R.id.nickText); 
+			nick.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0).nick));
+			TextView date = (TextView)comment.findViewById(R.id.dateText); 
+			date.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0).datum));
 			
 			comments.addView(comment);
 		} else {

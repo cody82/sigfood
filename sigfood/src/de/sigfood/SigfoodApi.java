@@ -120,7 +120,16 @@ public class SigfoodApi {
 							e.hauptgericht.bilder.add(Integer.parseInt(tmp));
 						}
 						else if(n3.getNodeName().equals("kommentar")) {
-							e.hauptgericht.kommentare.add(getChildNode(n3, "text").getTextContent());
+							Kommentar kommentar = new Kommentar();
+							kommentar.text = getChildNode(n3, "text").getTextContent();
+							if(getChildNode(n3, "nick") != null) {
+								kommentar.nick = getChildNode(n3, "nick").getTextContent();
+							}
+							else {
+								kommentar.nick = "anon";
+							}
+							kommentar.datum = getChildNode(n3, "formattedtime").getTextContent();
+							e.hauptgericht.kommentare.add(kommentar);
 						}
 					}
 					e.hauptgericht.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
@@ -143,7 +152,16 @@ public class SigfoodApi {
 					for(int k=0;k<list2.getLength();++k) {
 						Node n3 = list2.item(k);
 						if(n3.getNodeName().equals("kommentar")) {
-							beilage.kommentare.add(getChildNode(n3, "text").getTextContent());
+							Kommentar kommentar = new Kommentar();
+							kommentar.text = getChildNode(n3, "text").getTextContent();
+							if(getChildNode(n3, "nick") != null) {
+								kommentar.nick = getChildNode(n3, "nick").getTextContent();
+							}
+							else {
+								kommentar.nick = "anon";
+							}
+							kommentar.datum = getChildNode(n3, "formattedtime").getTextContent();
+							beilage.kommentare.add(kommentar);
 						}
 					}
 
