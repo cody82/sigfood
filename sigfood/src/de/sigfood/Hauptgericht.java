@@ -11,4 +11,7 @@ public class Hauptgericht implements Serializable {
 	public ArrayList<Kommentar> kommentare = new ArrayList<Kommentar>();
 	public Bewertung bewertung = new Bewertung();
 	public ArrayList<Integer> bilder = new ArrayList<Integer>();
+	public float preis_stud;
+	public float preis_bed;
+	public float preis_gast;
 }

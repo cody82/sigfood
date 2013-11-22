@@ -110,6 +110,13 @@ public class SigfoodApi {
 						e.hauptgericht.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
 					}
 
+					if(getChildNode(n2, "preisbed") != null)
+						e.hauptgericht.preis_bed = Float.parseFloat(getChildNode(n2, "preisbed").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisstud") != null)
+						e.hauptgericht.preis_stud = Float.parseFloat(getChildNode(n2, "preisstud").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisgast") != null)
+						e.hauptgericht.preis_gast = Float.parseFloat(getChildNode(n2, "preisgast").getTextContent()) * 0.01f;
+					
 					e.hauptgericht.id = Integer.parseInt(n2.getAttributes().getNamedItem("id").getTextContent());
 
 					NodeList list2 = n2.getChildNodes();
@@ -146,6 +153,13 @@ public class SigfoodApi {
 						beilage.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
 					}
 
+					if(getChildNode(n2, "preisbed") != null)
+						e.hauptgericht.preis_bed = Float.parseFloat(getChildNode(n2, "preisbed").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisstud") != null)
+						e.hauptgericht.preis_stud = Float.parseFloat(getChildNode(n2, "preisstud").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisgast") != null)
+						e.hauptgericht.preis_gast = Float.parseFloat(getChildNode(n2, "preisgast").getTextContent()) * 0.01f;
+					
 					beilage.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
 
 					NodeList list2 = n2.getChildNodes();
