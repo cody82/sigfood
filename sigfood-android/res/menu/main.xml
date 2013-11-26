@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    	xmlns:tools="http://schemas.android.com/tools" >
+
+        <item
+            android:id="@+id/bar_main_settings"
+            android:icon="@drawable/ic_action_settings"
+            android:showAsAction="always"
+            android:title="Einstellungen"
+            tools:ignore="HardcodedText" />
+        <!-- <item
+            android:id="@+id/bar_main_refresh"
+            android:icon="@drawable/ic_action_refresh"
+            android:showAsAction="always"
+            android:title="Aktualisieren"
+            tools:ignore="HardcodedText" /> -->
+
+    </menu>

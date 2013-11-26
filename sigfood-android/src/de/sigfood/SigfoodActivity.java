@@ -8,6 +8,7 @@ package de.sigfood;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,15 +41,18 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class SigfoodActivity extends Activity { 
+public class SigfoodActivity extends SherlockActivity { 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
 	
 		LinearLayout tv = (LinearLayout)findViewById(R.id.mainList);
-		tv.removeAllViews();		
-	
+		tv.removeAllViews();
+        
+        //ActionBar bar = getSupportActionBar();
+        //bar.setDisplayShowTitleEnabled(false);
+        
 		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
 			
@@ -71,6 +78,13 @@ public class SigfoodActivity extends Activity {
 		});
 			
 		fillspeiseplan(null);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater mi = getSupportMenuInflater();
+        mi.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 	
 	SigfoodApi sigfood;
@@ -130,8 +144,10 @@ public class SigfoodActivity extends Activity {
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainmeal, null);
 			TextView name = (TextView)essen.findViewById(R.id.mainMealTitle);
 			name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
-			TextView linie = (TextView)essen.findViewById(R.id.mainMealLine);
-			linie.setText("Linie " + e.linie);
+			
+			TextView info = (TextView)essen.findViewById(R.id.mainMealInfo);
+			DecimalFormat currencyFormatter = new DecimalFormat("0.00€");
+			info.setText("Linie " + e.linie + "\n" + currencyFormatter.format(e.hauptgericht.preis_stud));
 
 			final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.mainMenuRating);
 			bar1.setMax(50);

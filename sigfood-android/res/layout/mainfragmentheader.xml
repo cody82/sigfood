@@ -12,8 +12,9 @@
         <Button
             android:id="@+id/mainPrevDate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="left"
+            android:gravity="bottom|center_horizontal"
             android:text="&lt;&lt;"
             tools:ignore="HardcodedText" />
 
@@ -22,6 +23,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:maxLines="1"
@@ -32,8 +35,9 @@
         <Button
             android:id="@+id/mainNextDate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:gravity="bottom|center_horizontal"
             android:text=">>"
             tools:ignore="HardcodedText" />
 

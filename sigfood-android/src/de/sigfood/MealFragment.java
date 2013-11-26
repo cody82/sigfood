@@ -9,6 +9,7 @@ package de.sigfood;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -118,7 +119,10 @@ public class MealFragment extends Fragment {
 		bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
 		((TextView) parent.findViewById(R.id.mealRatingText)).setText(e.hauptgericht.bewertung.schnitt+", "+e.hauptgericht.bewertung.anzahl+" Bewertungen ("+e.hauptgericht.bewertung.stddev+" Abw.)");
 		
-		((TextView) parent.findViewById(R.id.priceText)).setText(e.hauptgericht.preis_stud + "€, " + e.hauptgericht.preis_bed + "€, " + e.hauptgericht.preis_stud + "€");
+		DecimalFormat currencyFormatter = new DecimalFormat("0.00€");
+		((TextView) parent.findViewById(R.id.mealPriceMain)).setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_stud));
+		((TextView) parent.findViewById(R.id.mealPriceSub)).setText("(" + currencyFormatter.format(e.hauptgericht.preis_bed) + " Bed, " + currencyFormatter.format(e.hauptgericht.preis_gast) + " Gast)");
+		
 		
 		final Date sfspd = e.datumskopie;
         Calendar today = Calendar.getInstance();

@@ -42,6 +42,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.buzzingandroid.tabswipe.TabSwipeActivity;
 
 public class MealActivity extends TabSwipeActivity {
@@ -53,6 +54,10 @@ public class MealActivity extends TabSwipeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        ActionBar bar = getSupportActionBar();
+        bar.setDisplayShowTitleEnabled(false);  
+        bar.setDisplayShowHomeEnabled(false);
         
         // Add each Fragment as Tab
         addTab("Gericht", MealFragment.class, MealFragment.createBundle("Gericht"));
