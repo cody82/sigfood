@@ -5,6 +5,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/priceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0€/0€/0€"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <RatingBar
         android:id="@+id/mealRating"
         android:layout_width="wrap_content"

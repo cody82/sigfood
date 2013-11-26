@@ -110,6 +110,13 @@ public class SigfoodApi {
 						e.hauptgericht.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
 					}
 
+					if(getChildNode(n2, "preisbed") != null)
+						e.hauptgericht.preis_bed = Float.parseFloat(getChildNode(n2, "preisbed").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisstud") != null)
+						e.hauptgericht.preis_stud = Float.parseFloat(getChildNode(n2, "preisstud").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisgast") != null)
+						e.hauptgericht.preis_gast = Float.parseFloat(getChildNode(n2, "preisgast").getTextContent()) * 0.01f;
+					
 					e.hauptgericht.id = Integer.parseInt(n2.getAttributes().getNamedItem("id").getTextContent());
 
 					NodeList list2 = n2.getChildNodes();
@@ -120,7 +127,16 @@ public class SigfoodApi {
 							e.hauptgericht.bilder.add(Integer.parseInt(tmp));
 						}
 						else if(n3.getNodeName().equals("kommentar")) {
-							e.hauptgericht.kommentare.add(getChildNode(n3, "text").getTextContent());
+							Kommentar kommentar = new Kommentar();
+							kommentar.text = getChildNode(n3, "text").getTextContent();
+							if(getChildNode(n3, "nick") != null) {
+								kommentar.nick = getChildNode(n3, "nick").getTextContent();
+							}
+							else {
+								kommentar.nick = "anon";
+							}
+							kommentar.datum = getChildNode(n3, "formattedtime").getTextContent();
+							e.hauptgericht.kommentare.add(kommentar);
 						}
 					}
 					e.hauptgericht.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
@@ -137,13 +153,29 @@ public class SigfoodApi {
 						beilage.bewertung.stddev = Float.parseFloat(getChildNode(bewertung, "stddev").getTextContent());
 					}
 
+					if(getChildNode(n2, "preisbed") != null)
+						e.hauptgericht.preis_bed = Float.parseFloat(getChildNode(n2, "preisbed").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisstud") != null)
+						e.hauptgericht.preis_stud = Float.parseFloat(getChildNode(n2, "preisstud").getTextContent()) * 0.01f;
+					if(getChildNode(n2, "preisgast") != null)
+						e.hauptgericht.preis_gast = Float.parseFloat(getChildNode(n2, "preisgast").getTextContent()) * 0.01f;
+					
 					beilage.bezeichnung = getChildNode(n2, "bezeichnung").getTextContent();
 
 					NodeList list2 = n2.getChildNodes();
 					for(int k=0;k<list2.getLength();++k) {
 						Node n3 = list2.item(k);
 						if(n3.getNodeName().equals("kommentar")) {
-							beilage.kommentare.add(getChildNode(n3, "text").getTextContent());
+							Kommentar kommentar = new Kommentar();
+							kommentar.text = getChildNode(n3, "text").getTextContent();
+							if(getChildNode(n3, "nick") != null) {
+								kommentar.nick = getChildNode(n3, "nick").getTextContent();
+							}
+							else {
+								kommentar.nick = "anon";
+							}
+							kommentar.datum = getChildNode(n3, "formattedtime").getTextContent();
+							beilage.kommentare.add(kommentar);
 						}
 					}
 
