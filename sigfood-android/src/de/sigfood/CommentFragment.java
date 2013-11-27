@@ -72,7 +72,7 @@ public class CommentFragment extends Fragment {
 			TextView date = (TextView)comment.findViewById(R.id.commentDate);
 			Date d;
 			try {
-				d = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(Html.fromHtml(e.hauptgericht.kommentare.get(0).datum).toString());
+				d = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(Html.fromHtml(k.datum).toString());
 				date.setText(new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(d));
 			} catch (Exception ex) {
 				ex.printStackTrace();
