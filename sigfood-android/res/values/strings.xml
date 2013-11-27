@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, SigfoodActivity!</string>
     <string name="app_name">Sigfood</string>
+    
+    <string-array name="settings_price">
+        <item>Studenten</item>
+        <item>Bedienstete</item>
+        <item>Gäste</item>
+    </string-array>
+    <string-array name="settings_priceV">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
 </resources>

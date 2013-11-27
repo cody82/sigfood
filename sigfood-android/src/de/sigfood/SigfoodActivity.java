@@ -26,8 +26,11 @@ import org.apache.http.message.BasicNameValuePair;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -41,7 +44,12 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class SigfoodActivity extends SherlockActivity { 
+public class SigfoodActivity extends SherlockActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+	public Date current = null;
+	
+	public SharedPreferences preferences;
+	public int settings_price;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,9 +84,28 @@ public class SigfoodActivity extends SherlockActivity {
 				}
 			}
 		});
-			
-		fillspeiseplan(null);
+		
+		if (savedInstanceState != null) current = (Date)savedInstanceState.getSerializable("de.sigfood.plandate");
+		else current = null;
+		
+		preferences = getSharedPreferences("de.sigfood", 0);
+		preferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
+		if (!preferences.contains("price")) {
+			Editor e = preferences.edit();
+			e.putString("price","0");
+			e.commit();
+		}
+		onSharedPreferenceChanged(preferences, null); // set the settings variables and load plan
     }
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		settings_price = Integer.parseInt(sharedPreferences.getString("price","0"));
+		fillspeiseplan(current); // refresh plan on change
+    }
+   
+    protected void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    	outState.putSerializable("de.sigfood.plandate", current);
+	}
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,10 +113,24 @@ public class SigfoodActivity extends SherlockActivity {
         mi.inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    		case R.id.bar_main_settings:
+    			Intent intent = new Intent(this, SigfoodSettings.class);
+    			startActivity(intent);
+    			break;
+    		default:
+    			break;
+    	}
+    	return true;
+    } 
 	
 	SigfoodApi sigfood;
 	
 	public void fillspeiseplan(Date d) {
+		current = d;
+		
 		/* First clear and show loading indicator */
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
 		parent.removeAllViews();
@@ -147,7 +188,11 @@ public class SigfoodActivity extends SherlockActivity {
 			
 			TextView info = (TextView)essen.findViewById(R.id.mainMealInfo);
 			DecimalFormat currencyFormatter = new DecimalFormat("0.00€");
-			info.setText("Linie " + e.linie + "\n" + currencyFormatter.format(e.hauptgericht.preis_stud));
+			String price;
+			if (settings_price==1) price = currencyFormatter.format(e.hauptgericht.preis_bed);
+			else if (settings_price==2) price = currencyFormatter.format(e.hauptgericht.preis_gast);
+			else price = currencyFormatter.format(e.hauptgericht.preis_stud);
+			info.setText("Linie " + e.linie + ((e.hauptgericht.preis_stud==0f || e.hauptgericht.preis_bed==0f || e.hauptgericht.preis_gast==0f) ? "" : "\n" + price));
 
 			final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.mainMenuRating);
 			bar1.setMax(50);

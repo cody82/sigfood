@@ -27,6 +27,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -51,6 +52,9 @@ public class MealActivity extends TabSwipeActivity {
 	public MealFragment mf;
 	public CommentFragment cf;
 	
+	public SharedPreferences preferences;
+	public int settings_price;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +62,9 @@ public class MealActivity extends TabSwipeActivity {
         ActionBar bar = getSupportActionBar();
         bar.setDisplayShowTitleEnabled(false);  
         bar.setDisplayShowHomeEnabled(false);
+        
+        preferences = getSharedPreferences("de.sigfood", 0);
+        settings_price = Integer.parseInt(preferences.getString("price","0"));
         
         // Add each Fragment as Tab
         addTab("Gericht", MealFragment.class, MealFragment.createBundle("Gericht"));

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="Einstellungen"
+	android:key="settings">
+
+    <PreferenceCategory android:title="Anzeige">
+		<ListPreference
+			android:key="price"
+			android:title="Hervorgehobener Preis"
+			android:summary="Wird in der Speisekarte angezeigt"
+			android:entries="@array/settings_price"
+			android:entryValues="@array/settings_priceV"/>
+	</PreferenceCategory>
+</PreferenceScreen>

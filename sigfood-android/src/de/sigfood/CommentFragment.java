@@ -6,6 +6,10 @@ package de.sigfood;
 // Handles commenting
 // ----------------------------------------
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -43,6 +47,7 @@ public class CommentFragment extends Fragment {
 	
 	SigfoodApi sigfood;
 	
+	@SuppressLint("SimpleDateFormat")
 	public void setComments(final MensaEssen e) {
 		if (v==null) return;
 		
@@ -62,10 +67,16 @@ public class CommentFragment extends Fragment {
 			LinearLayout comment = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.comment, null);
 			TextView text = (TextView)comment.findViewById(R.id.commentText); 
 			text.setText(Html.fromHtml(k.text));
-			TextView nick = (TextView)comment.findViewById(R.id.nickText);
+			TextView nick = (TextView)comment.findViewById(R.id.commentNick);
 			nick.setText(Html.fromHtml(k.nick));
-			TextView date = (TextView)comment.findViewById(R.id.dateText); 
-			date.setText(Html.fromHtml(k.datum));
+			TextView date = (TextView)comment.findViewById(R.id.commentDate);
+			Date d;
+			try {
+				d = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(Html.fromHtml(e.hauptgericht.kommentare.get(0).datum).toString());
+				date.setText(new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(d));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 			
 			comments.addView(comment);
 		}
