@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,13 +81,19 @@ public class MealFragment extends Fragment {
 		img.setVisibility(View.GONE);
 		btn.setVisibility(View.GONE);
 		load.setVisibility(View.VISIBLE);
+		
+		Display display = act.getWindowManager().getDefaultDisplay();
+		int picWidth;
+		ProgressBar test = (ProgressBar)v.findViewById(R.id.mealDoubleColumn);
+		if (test!=null) picWidth = display.getWidth()/2;
+		else picWidth = display.getWidth();
 
 		if (e.hauptgericht.bilder.size() > 0) {
 			Random rng = new Random();
 			int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
 			URL myFileUrl =null;
 			try {
-				myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=480");
+				myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
 			} catch (MalformedURLException e1) {
 				Bitmap bmImg = BitmapFactory.decodeResource(act.getResources(), R.drawable.picdownloadfailed);
 				img.setImageBitmap(bmImg);

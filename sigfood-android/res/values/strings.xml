@@ -3,12 +3,23 @@
 
     <string name="app_name">Sigfood</string>
     
-    <string-array name="settings_price">
+    <string-array name="settings_menuPriceHighlight">
         <item>Studenten</item>
         <item>Bedienstete</item>
         <item>Gäste</item>
     </string-array>
-    <string-array name="settings_priceV">
+    <string-array name="settings_menuPriceHighlightV">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    
+    <string-array name="settings_menuPictureSize">
+        <item>Keine Bilder</item>
+        <item>Halbe Auflösung</item>
+        <item>Volle Auflösung</item>
+    </string-array>
+    <string-array name="settings_menuPictureSizeV">
         <item>0</item>
         <item>1</item>
         <item>2</item>

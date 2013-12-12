@@ -31,10 +31,13 @@ import com.actionbarsherlock.view.MenuItem;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +52,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	
 	public SharedPreferences preferences;
 	public int settings_price;
+	public int settings_size;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,13 +96,15 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		preferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
 		if (!preferences.contains("price")) {
 			Editor e = preferences.edit();
-			e.putString("price","0");
+			e.putString("menuPriceHighlight","0");
+			e.putString("menuPictureSize", "2");
 			e.commit();
 		}
 		onSharedPreferenceChanged(preferences, null); // set the settings variables and load plan
     }
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		settings_price = Integer.parseInt(sharedPreferences.getString("price","0"));
+		settings_price = Integer.parseInt(sharedPreferences.getString("menuPriceHighlight","0"));
+		settings_size = Integer.parseInt(sharedPreferences.getString("menuPictureSize","2"));
 		fillspeiseplan(current); // refresh plan on change
     }
    
@@ -176,6 +182,14 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		test = (ProgressBar)findViewById(R.id.menuRowCount3);
 		if (test!=null) rows=3;
 		if (rows<=0) rows=1;
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		Resources resources = getResources();
+	    DisplayMetrics metrics = resources.getDisplayMetrics();
+	    int border = 100 * (int)(metrics.densityDpi / 160f);
+		int picWidth;
+		if (settings_size==1) picWidth = (display.getWidth() / rows - border) / 2;
+		else picWidth = display.getWidth() / rows - border;
 
 		for (final MensaEssen e : sigfood.essen) {
 			if (current==null && rows>1) {
@@ -200,23 +214,30 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 
 			ImageView img = (ImageView)essen.findViewById(R.id.mainMealPicture);
 			ProgressBar load = (ProgressBar)essen.findViewById(R.id.mainMealPictureLoading);
-
-			if (e.hauptgericht.bilder.size() > 0) {
-				Random rng = new Random();
-				int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
-				URL myFileUrl =null;
-				try {
-					myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=320");
-				} catch (MalformedURLException e1) {
-					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
-					img.setImageBitmap(bmImg);
-				}
-				PictureThread pt = new PictureThread(myFileUrl,img,load,this);
-				pt.start();
-			} else {
-				Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
-				img.setImageBitmap(bmImg);
+			
+			if (settings_size==0) {
+				img.setVisibility(View.GONE);
 				load.setVisibility(View.GONE);
+			} else {
+				if (e.hauptgericht.bilder.size() > 0) {
+					Random rng = new Random();
+					int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
+					URL myFileUrl =null;
+					try {
+						myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
+					} catch (MalformedURLException e1) {
+						Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
+						img.setImageBitmap(bmImg);
+					}
+					PictureThread pt;
+					if (settings_size==1) pt = new PictureThread(myFileUrl,img,load,this,true);
+					else pt = new PictureThread(myFileUrl,img,load,this);
+					pt.start();
+				} else {
+					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
+					img.setImageBitmap(bmImg);
+					load.setVisibility(View.GONE);
+				}
 			}
 			
 			essen.setOnClickListener(new Button.OnClickListener() {  

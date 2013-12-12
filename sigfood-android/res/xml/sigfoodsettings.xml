@@ -5,10 +5,16 @@
 
     <PreferenceCategory android:title="Anzeige">
 		<ListPreference
-			android:key="price"
+			android:key="menuPriceHighlight"
 			android:title="Hervorgehobener Preis"
 			android:summary="Wird in der Speisekarte angezeigt"
-			android:entries="@array/settings_price"
-			android:entryValues="@array/settings_priceV"/>
+			android:entries="@array/settings_menuPriceHighlight"
+			android:entryValues="@array/settings_menuPriceHighlightV"/>
+		<ListPreference
+			android:key="menuPictureSize"
+			android:title="Bildgröße in Speisekarte"
+			android:summary="Kann die Ladezeit verringern"
+			android:entries="@array/settings_menuPictureSize"
+			android:entryValues="@array/settings_menuPictureSizeV"/>
 	</PreferenceCategory>
 </PreferenceScreen>
