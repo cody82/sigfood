@@ -23,7 +23,7 @@
             android:layout_marginRight="5dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:gravity="right"
+            android:gravity="left"
             android:text="Gericht"
             android:textAppearance="?android:attr/textAppearanceLarge"
             tools:ignore="HardcodedText" />
@@ -53,7 +53,7 @@
             android:focusableInTouchMode="false" >
 
             <TextView
-                android:id="@+id/mainMealLine"
+                android:id="@+id/mainMealInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -61,7 +61,7 @@
                 android:layout_weight="1"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:text="Linie X"
+                android:text="Linie X\nPreis"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 tools:ignore="HardcodedText" />
 

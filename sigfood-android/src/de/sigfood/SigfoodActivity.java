@@ -8,6 +8,7 @@ package de.sigfood;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,12 +23,21 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -37,15 +47,24 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class SigfoodActivity extends Activity { 
+public class SigfoodActivity extends SherlockActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+	public Date current = null;
+	
+	public SharedPreferences preferences;
+	public int settings_price;
+	public int settings_size;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
 	
 		LinearLayout tv = (LinearLayout)findViewById(R.id.mainList);
-		tv.removeAllViews();		
-	
+		tv.removeAllViews();
+        
+        //ActionBar bar = getSupportActionBar();
+        //bar.setDisplayShowTitleEnabled(false);
+        
 		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
 			
@@ -69,13 +88,55 @@ public class SigfoodActivity extends Activity {
 				}
 			}
 		});
-			
-		fillspeiseplan(null);
+		
+		if (savedInstanceState != null) current = (Date)savedInstanceState.getSerializable("de.sigfood.plandate");
+		else current = null;
+		
+		preferences = getSharedPreferences("de.sigfood", 0);
+		preferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
+		if (!preferences.contains("price")) {
+			Editor e = preferences.edit();
+			e.putString("menuPriceHighlight","0");
+			e.putString("menuPictureSize", "2");
+			e.commit();
+		}
+		onSharedPreferenceChanged(preferences, null); // set the settings variables and load plan
     }
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		settings_price = Integer.parseInt(sharedPreferences.getString("menuPriceHighlight","0"));
+		settings_size = Integer.parseInt(sharedPreferences.getString("menuPictureSize","2"));
+		fillspeiseplan(current); // refresh plan on change
+    }
+   
+    protected void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    	outState.putSerializable("de.sigfood.plandate", current);
+	}
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater mi = getSupportMenuInflater();
+        mi.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    		case R.id.bar_main_settings:
+    			Intent intent = new Intent(this, SigfoodSettings.class);
+    			startActivity(intent);
+    			break;
+    		default:
+    			break;
+    	}
+    	return true;
+    } 
 	
 	SigfoodApi sigfood;
 	
 	public void fillspeiseplan(Date d) {
+		current = d;
+		
 		/* First clear and show loading indicator */
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
 		parent.removeAllViews();
@@ -121,6 +182,14 @@ public class SigfoodActivity extends Activity {
 		test = (ProgressBar)findViewById(R.id.menuRowCount3);
 		if (test!=null) rows=3;
 		if (rows<=0) rows=1;
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		Resources resources = getResources();
+	    DisplayMetrics metrics = resources.getDisplayMetrics();
+	    int border = 100 * (int)(metrics.densityDpi / 160f);
+		int picWidth;
+		if (settings_size==1) picWidth = (display.getWidth() / rows - border) / 2;
+		else picWidth = display.getWidth() / rows - border;
 
 		for (final MensaEssen e : sigfood.essen) {
 			if (current==null && rows>1) {
@@ -130,8 +199,14 @@ public class SigfoodActivity extends Activity {
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainmeal, null);
 			TextView name = (TextView)essen.findViewById(R.id.mainMealTitle);
 			name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
-			TextView linie = (TextView)essen.findViewById(R.id.mainMealLine);
-			linie.setText("Linie " + e.linie);
+			
+			TextView info = (TextView)essen.findViewById(R.id.mainMealInfo);
+			DecimalFormat currencyFormatter = new DecimalFormat("0.00€");
+			String price;
+			if (settings_price==1) price = currencyFormatter.format(e.hauptgericht.preis_bed);
+			else if (settings_price==2) price = currencyFormatter.format(e.hauptgericht.preis_gast);
+			else price = currencyFormatter.format(e.hauptgericht.preis_stud);
+			info.setText("Linie " + e.linie + ((e.hauptgericht.preis_stud==0f || e.hauptgericht.preis_bed==0f || e.hauptgericht.preis_gast==0f) ? "" : "\n" + price));
 
 			final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.mainMenuRating);
 			bar1.setMax(50);
@@ -139,23 +214,30 @@ public class SigfoodActivity extends Activity {
 
 			ImageView img = (ImageView)essen.findViewById(R.id.mainMealPicture);
 			ProgressBar load = (ProgressBar)essen.findViewById(R.id.mainMealPictureLoading);
-
-			if (e.hauptgericht.bilder.size() > 0) {
-				Random rng = new Random();
-				int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
-				URL myFileUrl =null;
-				try {
-					myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=320");
-				} catch (MalformedURLException e1) {
-					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
-					img.setImageBitmap(bmImg);
-				}
-				PictureThread pt = new PictureThread(myFileUrl,img,load,this);
-				pt.start();
-			} else {
-				Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
-				img.setImageBitmap(bmImg);
+			
+			if (settings_size==0) {
+				img.setVisibility(View.GONE);
 				load.setVisibility(View.GONE);
+			} else {
+				if (e.hauptgericht.bilder.size() > 0) {
+					Random rng = new Random();
+					int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
+					URL myFileUrl =null;
+					try {
+						myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
+					} catch (MalformedURLException e1) {
+						Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
+						img.setImageBitmap(bmImg);
+					}
+					PictureThread pt;
+					if (settings_size==1) pt = new PictureThread(myFileUrl,img,load,this,true);
+					else pt = new PictureThread(myFileUrl,img,load,this);
+					pt.start();
+				} else {
+					Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
+					img.setImageBitmap(bmImg);
+					load.setVisibility(View.GONE);
+				}
 			}
 			
 			essen.setOnClickListener(new Button.OnClickListener() {  

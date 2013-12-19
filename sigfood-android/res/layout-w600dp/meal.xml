@@ -5,6 +5,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <ProgressBar
+        android:id="@+id/mealDoubleColumn"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <include
         android:layout_width="match_parent"
         android:layout_height="match_parent"

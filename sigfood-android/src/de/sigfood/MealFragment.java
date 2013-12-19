@@ -9,15 +9,19 @@ package de.sigfood;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +58,7 @@ public class MealFragment extends Fragment {
 	
 	SigfoodApi sigfood;
 	
+	@SuppressLint("SimpleDateFormat")
 	public void setMeal(final MensaEssen e) {		
 		LinearLayout parent;
 		if (v.findViewById(R.id.mealList) instanceof LinearLayout) parent = (LinearLayout)v.findViewById(R.id.mealList);
@@ -76,13 +81,19 @@ public class MealFragment extends Fragment {
 		img.setVisibility(View.GONE);
 		btn.setVisibility(View.GONE);
 		load.setVisibility(View.VISIBLE);
+		
+		Display display = act.getWindowManager().getDefaultDisplay();
+		int picWidth;
+		ProgressBar test = (ProgressBar)v.findViewById(R.id.mealDoubleColumn);
+		if (test!=null) picWidth = display.getWidth()/2;
+		else picWidth = display.getWidth();
 
 		if (e.hauptgericht.bilder.size() > 0) {
 			Random rng = new Random();
 			int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
 			URL myFileUrl =null;
 			try {
-				myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=480");
+				myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
 			} catch (MalformedURLException e1) {
 				Bitmap bmImg = BitmapFactory.decodeResource(act.getResources(), R.drawable.picdownloadfailed);
 				img.setImageBitmap(bmImg);
@@ -117,8 +128,32 @@ public class MealFragment extends Fragment {
 		bar1.setMax(50);
 		bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
 		((TextView) parent.findViewById(R.id.mealRatingText)).setText(e.hauptgericht.bewertung.schnitt+", "+e.hauptgericht.bewertung.anzahl+" Bewertungen ("+e.hauptgericht.bewertung.stddev+" Abw.)");
-		
-		((TextView) parent.findViewById(R.id.priceText)).setText(e.hauptgericht.preis_stud + "€, " + e.hauptgericht.preis_bed + "€, " + e.hauptgericht.preis_stud + "€");
+
+		TextView price_main = (TextView) parent.findViewById(R.id.mealPriceMain);
+		TextView price_sub = (TextView) parent.findViewById(R.id.mealPriceSub);
+		if (e.linie.equalsIgnoreCase("0"))  {
+			price_main.setVisibility(View.GONE);
+			price_sub.setVisibility(View.GONE);
+		} else {
+			price_main.setVisibility(View.VISIBLE);
+			price_sub.setVisibility(View.VISIBLE);
+			if (e.hauptgericht.preis_stud==0f || e.hauptgericht.preis_bed==0f || e.hauptgericht.preis_gast==0f) {
+				price_main.setVisibility(View.GONE);
+				price_sub.setText("Preise unbekannt");
+			} else {
+				DecimalFormat currencyFormatter = new DecimalFormat("0.00€");
+				if (act.settings_price==1) {
+					price_main.setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_bed));
+					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_stud) + " Stud., " + currencyFormatter.format(e.hauptgericht.preis_gast) + " Gast)");
+				} else if (act.settings_price==2) {
+					price_main.setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_gast));
+					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_stud) + " Stud., " + currencyFormatter.format(e.hauptgericht.preis_bed) + " Bed.)");
+				} else {
+					price_main.setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_stud));
+					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_bed) + " Bed., " + currencyFormatter.format(e.hauptgericht.preis_gast) + " Gast)");
+				}
+			}
+		}
 		
 		final Date sfspd = e.datumskopie;
         Calendar today = Calendar.getInstance();
@@ -195,19 +230,27 @@ public class MealFragment extends Fragment {
 		
 		if (e.hauptgericht.kommentare.size()>0) {
 			v.findViewById(R.id.mealCommentLabel).setVisibility(View.VISIBLE);
+			((Button) v.findViewById(R.id.mealCommentButton)).setText("Mehr Kommentare");
 			comments.setVisibility(View.VISIBLE);
 
 			LinearLayout comment = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.comment, null);
 			TextView text = (TextView)comment.findViewById(R.id.commentText); 
 			text.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0).text));
-			TextView nick = (TextView)comment.findViewById(R.id.nickText); 
+			TextView nick = (TextView)comment.findViewById(R.id.commentNick); 
 			nick.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0).nick));
-			TextView date = (TextView)comment.findViewById(R.id.dateText); 
-			date.setText(Html.fromHtml(e.hauptgericht.kommentare.get(0).datum));
+			TextView date = (TextView)comment.findViewById(R.id.commentDate);
+			Date d;
+			try {
+				d = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(Html.fromHtml(e.hauptgericht.kommentare.get(0).datum).toString());
+				date.setText(new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(d));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 			
 			comments.addView(comment);
 		} else {
 			v.findViewById(R.id.mealCommentLabel).setVisibility(View.GONE);
+			((Button) v.findViewById(R.id.mealCommentButton)).setText("Kommentar schreiben");
 			comments.setVisibility(View.GONE);
 		}
 		
