@@ -58,15 +58,16 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
-	
+		
 		LinearLayout tv = (LinearLayout)findViewById(R.id.mainList);
 		tv.removeAllViews();
-        
-        //ActionBar bar = getSupportActionBar();
-        //bar.setDisplayShowTitleEnabled(false);
-        
+	       
+	    //ActionBar bar = getSupportActionBar();
+	   //bar.setDisplayShowTitleEnabled(false);
+	       
 		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
+		Button retry = (Button)findViewById(R.id.mainNoConnectionRetryButton);
 			
 		next_date.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v2)
@@ -88,9 +89,16 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 				}
 			}
 		});
+		retry.setOnClickListener(new Button.OnClickListener() {  
+			public void onClick(View v2)
+			{
+				fillspeiseplan(current);
+			}
+		});
 		
-		if (savedInstanceState != null) current = (Date)savedInstanceState.getSerializable("de.sigfood.plandate");
-		else current = null;
+		if (savedInstanceState != null) {
+			current = (Date)savedInstanceState.getSerializable("de.sigfood.plandate");
+		} else current = null;
 		
 		preferences = getSharedPreferences("de.sigfood", 0);
 		preferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
@@ -136,6 +144,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	
 	public void fillspeiseplan(Date d) {
 		current = d;
+		//Log.d("dbg",current.getDay()+"."+current.getMonth()+"."+current.getYear());
 		
 		/* First clear and show loading indicator */
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
@@ -145,6 +154,8 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		scroller.setVisibility(View.GONE);
 		View loader = (View)findViewById(R.id.mainLoading);
 		loader.setVisibility(View.VISIBLE);
+		View note = (View)findViewById(R.id.mainNoConnection);
+		note.setVisibility(View.GONE);
 
 		/* Start the download via a seperate thread */
 		SigfoodThread sft = new SigfoodThread(d,this);
@@ -153,6 +164,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	
 	public void fillspeiseplanReturn(SigfoodApi sfa) {
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
+		parent.removeAllViews();
 		TextView datum = (TextView)findViewById(R.id.mainDate);
 
 		View scroller = (View)findViewById(R.id.mainScroller);
@@ -172,7 +184,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		prev_date.setEnabled(sigfood.vorherigertag != null);
 		
 		int rowcounter = 0;
-		LinearLayout current = null;
+		LinearLayout currow = null;
 		
 		int rows = 0;
 		ProgressBar test = null;
@@ -192,9 +204,9 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		else picWidth = display.getWidth() / rows - border;
 
 		for (final MensaEssen e : sigfood.essen) {
-			if (current==null && rows>1) {
-				if (rows==2) current = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow2, null);
-				if (rows==3) current = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow3, null);
+			if (currow==null && rows>1) {
+				if (rows==2) currow = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow2, null);
+				if (rows==3) currow = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainrow3, null);
 			}
 			LinearLayout essen = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainmeal, null);
 			TextView name = (TextView)essen.findViewById(R.id.mainMealTitle);
@@ -247,20 +259,22 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 				}
 			});
 			
-			if (rows==1 || current==null) parent.addView(essen);
+			if (rows==1 || currow==null) parent.addView(essen);
 			else {
-				if (rowcounter==0) ((LinearLayout)current.findViewById(R.id.menuField1)).addView(essen);
-				else if (rowcounter==1) ((LinearLayout)current.findViewById(R.id.menuField2)).addView(essen);
-				else if (rowcounter==2) ((LinearLayout)current.findViewById(R.id.menuField3)).addView(essen);
+				if (rowcounter==0) ((LinearLayout)currow.findViewById(R.id.menuField1)).addView(essen);
+				else if (rowcounter==1) ((LinearLayout)currow.findViewById(R.id.menuField2)).addView(essen);
+				else if (rowcounter==2) ((LinearLayout)currow.findViewById(R.id.menuField3)).addView(essen);
 				rowcounter++;
 				if (rowcounter>=rows) {
 					rowcounter=0;
-					parent.addView(current);
-					current=null;
+					parent.addView(currow);
+					currow=null;
 				}
 			}
 		}
-		if (current!=null) parent.addView(current);
+		if (currow!=null) {
+			parent.addView(currow);
+		}
 	}
 
 	protected void startMeal(MensaEssen e) {
