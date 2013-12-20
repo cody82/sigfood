@@ -58,13 +58,13 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
-	
+		
 		LinearLayout tv = (LinearLayout)findViewById(R.id.mainList);
 		tv.removeAllViews();
-        
-        //ActionBar bar = getSupportActionBar();
-        //bar.setDisplayShowTitleEnabled(false);
-        
+	       
+	    //ActionBar bar = getSupportActionBar();
+	   //bar.setDisplayShowTitleEnabled(false);
+	       
 		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
 			

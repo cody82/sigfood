@@ -2,6 +2,8 @@ package de.sigfood;
 
 import java.util.Date;
 
+import android.view.View;
+
 public class SigfoodThread extends Thread {
 	Date d;
 	SigfoodApi sigfood;
@@ -13,11 +15,22 @@ public class SigfoodThread extends Thread {
 	}
 	
     public void run() {
-    	sigfood = new SigfoodApi(d);
-        act.runOnUiThread(new Runnable() {
-            public void run() {
-            	act.fillspeiseplanReturn(sigfood);
-            }
-        });
+    	try {
+	    	sigfood = new SigfoodApi(d);
+	        act.runOnUiThread(new Runnable() {
+	            public void run() {
+	            	act.fillspeiseplanReturn(sigfood);
+	            }
+	        });
+	    } catch(Exception e) {
+	        act.runOnUiThread(new Runnable() {
+	            public void run() {
+	            	View v = (View)act.findViewById(R.id.mainLoading);
+	        		v.setVisibility(View.GONE);
+	            	v = (View)act.findViewById(R.id.mainNoConnection);
+	        		v.setVisibility(View.VISIBLE);
+	            }
+	        });
+	    }
     }
 }
