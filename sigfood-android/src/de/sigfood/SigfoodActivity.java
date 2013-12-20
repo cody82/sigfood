@@ -37,6 +37,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	       
 		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
+		Button retry = (Button)findViewById(R.id.mainNoConnectionRetryButton);
 			
 		next_date.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v2)
@@ -88,9 +90,17 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 				}
 			}
 		});
+		retry.setOnClickListener(new Button.OnClickListener() {  
+			public void onClick(View v2)
+			{
+				fillspeiseplan(current);
+			}
+		});
 		
-		if (savedInstanceState != null) current = (Date)savedInstanceState.getSerializable("de.sigfood.plandate");
-		else current = null;
+		if (savedInstanceState != null) {
+			current = (Date)savedInstanceState.getSerializable("de.sigfood.plandate");
+			Log.d("date",current.getDay()+"."+current.getMonth()+"."+current.getYear());
+		} else current = null;
 		
 		preferences = getSharedPreferences("de.sigfood", 0);
 		preferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
@@ -145,6 +155,8 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		scroller.setVisibility(View.GONE);
 		View loader = (View)findViewById(R.id.mainLoading);
 		loader.setVisibility(View.VISIBLE);
+		View note = (View)findViewById(R.id.mainNoConnection);
+		note.setVisibility(View.GONE);
 
 		/* Start the download via a seperate thread */
 		SigfoodThread sft = new SigfoodThread(d,this);
