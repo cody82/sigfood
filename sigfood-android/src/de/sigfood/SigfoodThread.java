@@ -2,6 +2,7 @@ package de.sigfood;
 
 import java.util.Date;
 
+import android.util.Log;
 import android.view.View;
 
 public class SigfoodThread extends Thread {
