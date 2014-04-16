@@ -13,7 +13,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -47,9 +46,10 @@ public class MealFragment extends Fragment {
 			((ViewGroup) v.getParent()).removeView(v);
 		}
 		act.setMF(this);
+        
 		return v;
 	}
- 
+	
     public static Bundle createBundle(String title) {
         Bundle bundle = new Bundle();
         bundle.putString("title", title);
@@ -89,8 +89,9 @@ public class MealFragment extends Fragment {
 		else picWidth = display.getWidth();
 
 		if (e.hauptgericht.bilder.size() > 0) {
-			Random rng = new Random();
-			int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
+			//Random rng = new Random();
+			//int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
+			int bild_id = e.hauptgericht.bilder.get(e.hauptgericht.bilder.size()-1);
 			URL myFileUrl =null;
 			try {
 				myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
@@ -112,7 +113,7 @@ public class MealFragment extends Fragment {
                 {
                         act.takePhoto(v2);
                 }
-        });		
+        });
         btn.setTag(e);
         btn.setOnClickListener(new Button.OnClickListener() {
                 public void onClick(View v2)

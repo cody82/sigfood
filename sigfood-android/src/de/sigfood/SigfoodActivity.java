@@ -53,6 +53,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	public SharedPreferences preferences;
 	public int settings_price;
 	public int settings_size;
+	public int settings_cache;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 			Editor e = preferences.edit();
 			e.putString("menuPriceHighlight","0");
 			e.putString("menuPictureSize", "2");
+			e.putString("cacheLifeTime", "6");
 			e.commit();
 		}
 		onSharedPreferenceChanged(preferences, null); // set the settings variables and load plan
@@ -113,6 +115,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		settings_price = Integer.parseInt(sharedPreferences.getString("menuPriceHighlight","0"));
 		settings_size = Integer.parseInt(sharedPreferences.getString("menuPictureSize","2"));
+		settings_cache = Integer.parseInt(sharedPreferences.getString("cacheLifeTime","6"));
 		fillspeiseplan(current); // refresh plan on change
     }
    
@@ -133,6 +136,9 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
     		case R.id.bar_main_settings:
     			Intent intent = new Intent(this, SigfoodSettings.class);
     			startActivity(intent);
+    			break;
+    		case R.id.bar_main_refresh:
+    			fillspeiseplan(current);
     			break;
     		default:
     			break;
@@ -158,7 +164,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		note.setVisibility(View.GONE);
 
 		/* Start the download via a seperate thread */
-		SigfoodThread sft = new SigfoodThread(d,this);
+		SigfoodThread sft = new SigfoodThread(d,this,settings_cache);
 		sft.start();
 	}
 	

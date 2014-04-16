@@ -8,11 +8,11 @@
             android:showAsAction="always"
             android:title="Einstellungen"
             tools:ignore="HardcodedText" />
-        <!-- <item
+        <item
             android:id="@+id/bar_main_refresh"
             android:icon="@drawable/ic_action_refresh"
             android:showAsAction="always"
             android:title="Aktualisieren"
-            tools:ignore="HardcodedText" /> -->
+            tools:ignore="HardcodedText" />
 
     </menu>

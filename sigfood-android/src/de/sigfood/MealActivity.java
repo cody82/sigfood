@@ -224,10 +224,10 @@ public class MealActivity extends TabSwipeActivity {
 		ImageButton btn = (ImageButton)v;
 		phototarget = btn;
 
-		final String[] items = new String[] { "Select from file", "Take picture"};
+		final String[] items = new String[] { "Datei auswählen", "Mit Kamera aufnehmen"};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.select_dialog_item, items);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Select Image");
+		builder.setTitle("Bild hochladen");
 		builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
 			public void onClick( DialogInterface dialog, int item ) {
 				if (item == 0) {
@@ -236,7 +236,7 @@ public class MealActivity extends TabSwipeActivity {
 	                intent.setType("image/*");
 	                intent.setAction(Intent.ACTION_GET_CONTENT);
 
-	                startActivityForResult(Intent.createChooser(intent, "Complete action using"), PICK_FROM_FILE);
+	                startActivityForResult(Intent.createChooser(intent, "App auswählen"), PICK_FROM_FILE);
 				} else {
 					Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 					File photo = new File(Environment.getExternalStorageDirectory(), "sigfood.jpg");

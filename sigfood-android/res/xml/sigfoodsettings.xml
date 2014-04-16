@@ -16,5 +16,11 @@
 			android:summary="Kann die Ladezeit verringern"
 			android:entries="@array/settings_menuPictureSize"
 			android:entryValues="@array/settings_menuPictureSizeV"/>
+		<ListPreference
+			android:key="cacheLifeTime"
+			android:title="Cache-Lebensdauer"
+			android:summary="Gültigkeitsdauer für Speisepläne"
+			android:entries="@array/settings_cacheLifeTime"
+			android:entryValues="@array/settings_cacheLifeTimeV"/>
 	</PreferenceCategory>
 </PreferenceScreen>

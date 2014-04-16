@@ -1,6 +1,7 @@
 package de.sigfood;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,8 +17,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class SigfoodApi {
+public class SigfoodApi implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public ArrayList<MensaEssen> essen = new ArrayList<MensaEssen>();
+	public Date abrufdatum;
 	public Date speiseplandatum;
 	public Date naechstertag;
 	public Date vorherigertag;
@@ -72,6 +76,7 @@ public class SigfoodApi {
 		NodeList list = doc.getDocumentElement().getElementsByTagName("Mensaessen");
 
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		abrufdatum = new Date();
 		speiseplandatum = new Date();
 		naechstertag = null;
 		vorherigertag = null;
