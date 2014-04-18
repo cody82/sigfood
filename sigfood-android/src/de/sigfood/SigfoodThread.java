@@ -14,12 +14,14 @@ public class SigfoodThread extends Thread {
 	SigfoodApi sigfood;
 	SigfoodActivity act;
 	int c;
+	boolean i;
 	
-	public SigfoodThread(Date date, SigfoodActivity sfa, int cachettl) {
+	public SigfoodThread(Date date, SigfoodActivity sfa, int cachettl, boolean ignorecache) {
 		d = date;
 		if (d==null) d = new Date();
 		act = sfa;
 		c = cachettl;
+		i = ignorecache;
 	}
 	
     public void run() {
@@ -36,9 +38,10 @@ public class SigfoodThread extends Thread {
                 ois.close();
                 fis.close();
                 if (sigfood.abrufdatum.getTime() < (new Date()).getTime()-c*60*60*1000) reload=true;
+                // TODO: do not reload if there's no internet connection
     		}
 	    	
-	    	if (reload) {
+	    	if (reload || i) {
 	    		sigfood = new SigfoodApi(d);
 	    		cache.delete();
 	    		if (cache.createNewFile()) {
