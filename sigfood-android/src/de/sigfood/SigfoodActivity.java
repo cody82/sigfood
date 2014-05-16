@@ -149,8 +149,19 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	SigfoodApi sigfood;
 	
 	public void fillspeiseplan(Date d, boolean ignorecache) {
+		if (current!=null) {
+			Button next_date = (Button)findViewById(R.id.mainNextDate);
+			next_date.setEnabled(d.before(current));
+			Button prev_date = (Button)findViewById(R.id.mainPrevDate);
+			prev_date.setEnabled(d.after(current));
+			sigfood.naechstertag = sigfood.vorherigertag = current;
+		}
+		
+		if (d==null) d = new Date();
 		current = d;
-		//Log.d("dbg",current.getDay()+"."+current.getMonth()+"."+current.getYear());
+		final Date sfspd = d;
+		TextView datum = (TextView)findViewById(R.id.mainDate);
+		datum.setText(String.format("%tA, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
 		
 		/* First clear and show loading indicator */
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
@@ -168,14 +179,11 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		/* Start the download via a seperate thread */
 		SigfoodThread sft = new SigfoodThread(d,this,settings_cache,ignorecache);
 		sft.start();
-		
-		// TODO: date doesn't change while loading and when API call fails
 	}
 	
 	public void fillspeiseplanReturn(SigfoodApi sfa) {
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
 		parent.removeAllViews();
-		TextView datum = (TextView)findViewById(R.id.mainDate);
 
 		View scroller = (View)findViewById(R.id.mainScroller);
 		scroller.setVisibility(View.VISIBLE);
@@ -183,10 +191,6 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		loader.setVisibility(View.GONE);
 		
 		sigfood = sfa;
-
-		/* Now start to fill plan and download pictures */
-		final Date sfspd = sigfood.speiseplandatum;
-		datum.setText(String.format("%tA, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
 		
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
 		next_date.setEnabled(sigfood.naechstertag != null);
