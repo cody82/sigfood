@@ -23,4 +23,19 @@
 			android:entries="@array/settings_cacheLifeTime"
 			android:entryValues="@array/settings_cacheLifeTimeV"/>
 	</PreferenceCategory>
+	
+    <PreferenceCategory android:title="Über Sigfood">
+		<Preference
+		    android:title="Sigfood auf GitHub"
+			android:summary="github.com/cody82/sigfood" >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="https://github.com/cody82/sigfood" />
+		</Preference>
+		<Preference
+		    android:title="Apache 2.0-Lizenz"
+			android:summary="Sigfood nutzt ActionBarSherlock, welches unter dieser Lizenz steht." >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="http://www.apache.org/licenses/LICENSE-2.0.html" />
+		</Preference>
+	</PreferenceCategory>
 </PreferenceScreen>
