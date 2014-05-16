@@ -14,6 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="left"
+            android:enabled="false"
             android:gravity="bottom|center_horizontal"
             android:text="&lt;&lt;"
             tools:ignore="HardcodedText" />
@@ -37,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:enabled="false"
             android:gravity="bottom|center_horizontal"
             android:text=">>"
             tools:ignore="HardcodedText" />

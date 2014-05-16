@@ -6,13 +6,10 @@ package de.sigfood;
 // --------------------------------------------------
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -32,8 +29,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
@@ -149,7 +144,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	SigfoodApi sigfood;
 	
 	public void fillspeiseplan(Date d, boolean ignorecache) {
-		if (current!=null) {
+		if (current!=null && sigfood!=null) {
 			Button next_date = (Button)findViewById(R.id.mainNextDate);
 			next_date.setEnabled(d.before(current));
 			Button prev_date = (Button)findViewById(R.id.mainPrevDate);
@@ -182,6 +177,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	}
 	
 	public void fillspeiseplanReturn(SigfoodApi sfa) {
+		// TODO: Move to seperate thread? Frequent warnings about main thread doing too much work
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
 		parent.removeAllViews();
 
@@ -246,25 +242,14 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 					img.setVisibility(View.GONE);
 					load.setVisibility(View.GONE);
 				} else {
+					int bild_id = -1;
 					if (e.hauptgericht.bilder.size() > 0) {
-						Random rng = new Random();
-						int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
-						URL myFileUrl =null;
-						try {
-							myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
-						} catch (MalformedURLException e1) {
-							Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.picdownloadfailed);
-							img.setImageBitmap(bmImg);
-						}
-						PictureThread pt;
-						if (settings_size==1) pt = new PictureThread(myFileUrl,img,load,this,true);
-						else pt = new PictureThread(myFileUrl,img,load,this);
-						pt.start();
-					} else {
-						Bitmap bmImg = BitmapFactory.decodeResource(getResources(), R.drawable.nophotoavailable003);
-						img.setImageBitmap(bmImg);
-						load.setVisibility(View.GONE);
+						bild_id = e.hauptgericht.bilder.get(e.hauptgericht.bilder.size()-1);
 					}
+					PictureThread pt;
+					if (settings_size==1) pt = new PictureThread(bild_id,picWidth,img,load,this,true);
+					else pt = new PictureThread(bild_id,picWidth,img,load,this);
+					pt.start();
 				}
 				
 				essen.setOnClickListener(new Button.OnClickListener() {  

@@ -7,16 +7,12 @@ package de.sigfood;
 // Links to CommentFragment
 // ----------------------------------------
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -89,17 +85,9 @@ public class MealFragment extends Fragment {
 		else picWidth = display.getWidth();
 
 		if (e.hauptgericht.bilder.size() > 0) {
-			//Random rng = new Random();
-			//int bild_id = e.hauptgericht.bilder.get(rng.nextInt(e.hauptgericht.bilder.size()));
+			// TODO: Allow scrolling through pictures
 			int bild_id = e.hauptgericht.bilder.get(e.hauptgericht.bilder.size()-1);
-			URL myFileUrl =null;
-			try {
-				myFileUrl= new URL("http://www.sigfood.de/?do=getimage&bildid=" + bild_id + "&width=" + picWidth);
-			} catch (MalformedURLException e1) {
-				Bitmap bmImg = BitmapFactory.decodeResource(act.getResources(), R.drawable.picdownloadfailed);
-				img.setImageBitmap(bmImg);
-			}
-			PictureThread pt = new PictureThread(myFileUrl,img,load,act);
+			PictureThread pt = new PictureThread(bild_id,picWidth,img,load,act);
 			pt.start();
 		} else {
 			img.setVisibility(View.GONE);
