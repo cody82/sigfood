@@ -56,6 +56,7 @@ public class MealFragment extends Fragment {
 	
 	@SuppressLint("SimpleDateFormat")
 	public void setMeal(final MensaEssen e) {		
+		// TODO: Analyze this method. Frequent warnings about main thread doing too much work, no idea why
 		LinearLayout parent;
 		if (v.findViewById(R.id.mealList) instanceof LinearLayout) parent = (LinearLayout)v.findViewById(R.id.mealList);
 		else parent = (LinearLayout)v.findViewById(R.id.meal);

@@ -74,7 +74,7 @@ public class PictureThread extends Thread {
 			    	
 			    	if (!reload) {
 		    			long created = cache.lastModified();
-		                if (created < (new Date()).getTime()-7*24*60*60*1000) reload=true;
+		                if (created < (new Date()).getTime()-24*60*60*1000) reload=true;
 		                else {
 		                	bmImg2 = BitmapFactory.decodeFile(act.getCacheDir().getPath()+"/img_"+id+"_"+width+".jpg");
 		                }

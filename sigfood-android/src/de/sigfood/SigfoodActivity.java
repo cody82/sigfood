@@ -5,6 +5,7 @@ package de.sigfood;
 // Handles the fragments and picture taking/uploading
 // --------------------------------------------------
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,7 +179,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	}
 	
 	public void fillspeiseplanReturn(SigfoodApi sfa) {
-		// TODO: Move to seperate thread? Frequent warnings about main thread doing too much work
+		// TODO: Analyze this method. Few warnings about main thread doing too much work, no idea why
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
 		parent.removeAllViews();
 
@@ -322,5 +324,30 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		}
 
 		return true;
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// delete images in cache when quitting app
+	    super.onDestroy();
+	    try {
+	    	File cache = new File(getCacheDir().getPath());
+	    	for (final File cacheFile : cache.listFiles()) {
+	            if (cacheFile.isFile()) {
+	            	String name = cacheFile.getName();
+	            	if (name.substring(name.length()-4, name.length()).equals(".jpg")) {
+	            		// is a picture - remove if older than 1 day
+	            		long created = cache.lastModified();
+		                if (created < (new Date()).getTime()-24*60*60*1000) cacheFile.delete();
+	            	} else {
+	            		// is a sigfood file - remove if older than 1 week
+	            		long created = cache.lastModified();
+		                if (created < (new Date()).getTime()-7*24*60*60*1000) cacheFile.delete();
+	            	}
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 }
