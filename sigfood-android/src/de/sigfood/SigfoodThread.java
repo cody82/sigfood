@@ -11,7 +11,7 @@ import android.view.View;
 
 public class SigfoodThread extends Thread {
 	Date d;
-	SigfoodApi sigfood;
+	SigfoodApi sigfood = null;
 	SigfoodActivity act;
 	int c;
 	boolean i;
@@ -25,9 +25,11 @@ public class SigfoodThread extends Thread {
 	}
 	
     public void run() {
+    	boolean reload = false;
+    	File cache = null;
+    	
     	try {
-    		boolean reload = false;
-	    	File cache = new File(act.getCacheDir().getPath()+"/"+d.getYear()+"-"+d.getMonth()+"-"+d.getDate());
+	    	cache = new File(act.getCacheDir().getPath()+"/"+d.getYear()+"-"+d.getMonth()+"-"+d.getDate());
 	    	if (!cache.isFile()) reload=true;
 	    	else if (!cache.canRead()) reload=true;
 	    	
@@ -38,20 +40,25 @@ public class SigfoodThread extends Thread {
                 ois.close();
                 fis.close();
                 if (sigfood.abrufdatum.getTime() < (new Date()).getTime()-c*60*60*1000) reload=true;
-                // TODO: do not reload if there's no internet connection
     		}
-	    	
-	    	if (reload || i) {
+	    } catch(Exception e) {
+	    	e.printStackTrace();
+	    }
+    	
+	    try {
+	    	if (reload || i || sigfood==null) {
 	    		sigfood = new SigfoodApi(d);
-	    		cache.delete();
-	    		if (cache.createNewFile()) {
-	    			if (cache.canWrite()) {
-	    				FileOutputStream fos = new FileOutputStream(cache);
-	    		        ObjectOutputStream oos = new ObjectOutputStream(fos);
-	    		        oos.writeObject(sigfood);
-	    		        oos.close();
-	    		        fos.close();
-	    			}
+	    		if (cache!=null) {
+	    			cache.delete();
+		    		if (cache.createNewFile()) {
+		    			if (cache.canWrite()) {
+		    				FileOutputStream fos = new FileOutputStream(cache);
+		    		        ObjectOutputStream oos = new ObjectOutputStream(fos);
+		    		        oos.writeObject(sigfood);
+		    		        oos.close();
+		    		        fos.close();
+		    			}
+		    		}
 	    		}
     		}
 	        act.runOnUiThread(new Runnable() {
@@ -61,14 +68,22 @@ public class SigfoodThread extends Thread {
 	        });
 	    } catch(Exception e) {
 	    	e.printStackTrace();
-	        act.runOnUiThread(new Runnable() {
-	            public void run() {
-	            	View v = (View)act.findViewById(R.id.mainLoading);
-	        		v.setVisibility(View.GONE);
-	            	v = (View)act.findViewById(R.id.mainNoConnection);
-	        		v.setVisibility(View.VISIBLE);
-	            }
-	        });
+	    	if (sigfood!=null) {
+		        act.runOnUiThread(new Runnable() {
+		            public void run() {
+		            	act.fillspeiseplanReturn(sigfood);
+		            }
+		        });
+	    	} else {
+		        act.runOnUiThread(new Runnable() {
+		            public void run() {
+		            	View v = (View)act.findViewById(R.id.mainLoading);
+		        		v.setVisibility(View.GONE);
+		            	v = (View)act.findViewById(R.id.mainNoConnection);
+		        		v.setVisibility(View.VISIBLE);
+		            }
+		        });
+	    	}
 	    }
     }
 }
