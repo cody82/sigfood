@@ -144,8 +144,10 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
     } 
 	
 	SigfoodApi sigfood;
+	SigfoodThread sfthread;
 	
 	public void fillspeiseplan(Date d, boolean ignorecache) {
+		// TODO: Set buttons to next/prev date to allow quick scrolling. Automatically skip weekends, and have a maximum of 4 days before and after?		
 		if (current!=null && sigfood!=null) {
 			Button next_date = (Button)findViewById(R.id.mainNextDate);
 			next_date.setEnabled(d.before(current));
@@ -174,12 +176,15 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		v.setVisibility(View.GONE);
 
 		/* Start the download via a seperate thread */
-		SigfoodThread sft = new SigfoodThread(d,this,settings_cache,ignorecache);
-		sft.start();
+		if (sfthread!=null) sfthread.stop = true;
+		sfthread = new SigfoodThread(d,this,settings_cache,ignorecache);
+		sfthread.start();
 	}
 	
 	public void fillspeiseplanReturn(SigfoodApi sfa) {
 		// TODO: Analyze this method. Few warnings about main thread doing too much work, no idea why
+		sfthread = null;
+		
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
 		parent.removeAllViews();
 

@@ -16,6 +16,8 @@ public class SigfoodThread extends Thread {
 	int c;
 	boolean i;
 	
+	boolean stop = false;
+	
 	public SigfoodThread(Date date, SigfoodActivity sfa, int cachettl, boolean ignorecache) {
 		d = date;
 		if (d==null) d = new Date();
@@ -61,6 +63,8 @@ public class SigfoodThread extends Thread {
 		    		}
 	    		}
     		}
+	    	if (stop) return;
+	    	
 	        act.runOnUiThread(new Runnable() {
 	            public void run() {
 	            	act.fillspeiseplanReturn(sigfood);
@@ -68,6 +72,8 @@ public class SigfoodThread extends Thread {
 	        });
 	    } catch(Exception e) {
 	    	e.printStackTrace();
+	    	if (stop) return;
+	    	
 	    	if (sigfood!=null) {
 		        act.runOnUiThread(new Runnable() {
 		            public void run() {
