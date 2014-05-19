@@ -15,7 +15,7 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 
 public class PictureThread extends Thread {
 	int id;
@@ -23,11 +23,11 @@ public class PictureThread extends Thread {
 	Activity act;
 	ImageView img;
 	ImageButton btn;
-	ProgressBar load;
+	LinearLayout load;
 	boolean crop;
 	boolean doubleSize = false;
 	
-	public PictureThread(int b, int w, ImageView i, ProgressBar l, Activity sfa) {
+	public PictureThread(int b, int w, ImageView i, LinearLayout l, Activity sfa) {
 		id = b;
 		width = w;
 		act = sfa;
@@ -35,7 +35,7 @@ public class PictureThread extends Thread {
 		load = l;
 		crop = true;
 	}
-	public PictureThread(int b, int w, ImageView i, ProgressBar l, Activity sfa, boolean ds) {
+	public PictureThread(int b, int w, ImageView i, LinearLayout l, Activity sfa, boolean ds) {
 		id = b;
 		width = w;
 		act = sfa;
@@ -44,7 +44,7 @@ public class PictureThread extends Thread {
 		crop = true;
 		doubleSize = true;
 	}
-	public PictureThread(int b, int w, ImageButton i, ProgressBar l, Activity sfa) {
+	public PictureThread(int b, int w, ImageButton i, LinearLayout l, Activity sfa) {
 		id = b;
 		width = w;
 		act = sfa;

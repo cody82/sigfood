@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class MealFragment extends Fragment {
 	
@@ -74,7 +75,7 @@ public class MealFragment extends Fragment {
 		
 		final ImageButton img = (ImageButton)parent.findViewById(R.id.mealPicture);
 		Button btn = (Button)parent.findViewById(R.id.mealUpload);
-		ProgressBar load = (ProgressBar)parent.findViewById(R.id.mealPictureLoading);
+		LinearLayout load = (LinearLayout)parent.findViewById(R.id.mealPictureLoading);
 		img.setVisibility(View.GONE);
 		btn.setVisibility(View.GONE);
 		load.setVisibility(View.VISIBLE);
@@ -84,6 +85,8 @@ public class MealFragment extends Fragment {
 		ProgressBar test = (ProgressBar)v.findViewById(R.id.mealDoubleColumn);
 		if (test!=null) picWidth = display.getWidth()/2;
 		else picWidth = display.getWidth();
+		LayoutParams params = (LayoutParams) load.getLayoutParams();
+		params.height = (int)((float)picWidth/(float)16)*9;
 
 		if (e.hauptgericht.bilder.size() > 0) {
 			// TODO: Allow scrolling through pictures

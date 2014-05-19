@@ -43,6 +43,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -69,7 +70,8 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		Button prev_date = (Button)findViewById(R.id.mainPrevDate);
 		Button next_date = (Button)findViewById(R.id.mainNextDate);
 		Button retry = (Button)findViewById(R.id.mainNoConnectionRetryButton);
-			
+		
+		// TODO: Allow scrolling by swiping
 		next_date.setOnClickListener(new Button.OnClickListener() {  
 			public void onClick(View v2)
 			{
@@ -232,6 +234,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 		int picWidth;
 		if (settings_size==1) picWidth = (display.getWidth() / rows - border) / 2;
 		else picWidth = display.getWidth() / rows - border;
+		int loadHeight = (int)((float)picWidth/(float)16)*9;
 
 		if (sigfood.essen.size()>0) {
 			for (final MensaEssen e : sigfood.essen) {
@@ -256,7 +259,9 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 				bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
 	
 				ImageView img = (ImageView)essen.findViewById(R.id.mainMealPicture);
-				ProgressBar load = (ProgressBar)essen.findViewById(R.id.mainMealPictureLoading);
+				LinearLayout load = (LinearLayout)essen.findViewById(R.id.mainMealPictureLoading);
+				LayoutParams params = (LayoutParams) load.getLayoutParams();
+				params.height = loadHeight;
 				
 				if (settings_size==0) {
 					img.setVisibility(View.GONE);
