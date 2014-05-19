@@ -46,7 +46,8 @@ public class SigfoodThread extends Thread {
 	    } catch(Exception e) {
 	    	e.printStackTrace();
 	    }
-    	
+    	if (stop) return;
+
 	    try {
 	    	if (reload || i || sigfood==null) {
 	    		sigfood = new SigfoodApi(d);

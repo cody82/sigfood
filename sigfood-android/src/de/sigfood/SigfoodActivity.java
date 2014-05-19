@@ -1,5 +1,7 @@
 package de.sigfood;
 
+// TODO: Replace all Date objects by Calendar? Lots of conversions between the two
+
 // --------------------------------------------------
 // SigfoodActivity
 // Handles the fragments and picture taking/uploading
@@ -9,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -146,21 +149,31 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 	SigfoodApi sigfood;
 	SigfoodThread sfthread;
 	
-	public void fillspeiseplan(Date d, boolean ignorecache) {
-		// TODO: Set buttons to next/prev date to allow quick scrolling. Automatically skip weekends, and have a maximum of 4 days before and after?		
-		if (current!=null && sigfood!=null) {
-			Button next_date = (Button)findViewById(R.id.mainNextDate);
-			next_date.setEnabled(d.before(current));
-			Button prev_date = (Button)findViewById(R.id.mainPrevDate);
-			prev_date.setEnabled(d.after(current));
-			sigfood.naechstertag = sigfood.vorherigertag = current;
-		}
-		
+	public void fillspeiseplan(Date d, boolean ignorecache) {		
 		if (d==null) d = new Date();
 		current = d;
 		final Date sfspd = d;
 		TextView datum = (TextView)findViewById(R.id.mainDate);
 		datum.setText(String.format("%tA, %td.%tm.%tY", sfspd, sfspd, sfspd, sfspd));
+
+		if (current!=null && sigfood!=null) {
+			Calendar cal = Calendar.getInstance();
+	        cal.add(Calendar.DATE, 7);
+			Date week = cal.getTime();
+	        cal.setTime(d);
+	        do {
+	        	cal.add(Calendar.DATE, -1);
+	        } while (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY);
+	        Log.d("Cal",cal.get(Calendar.DAY_OF_WEEK)+" "+Calendar.SATURDAY+" "+Calendar.SUNDAY);
+			sigfood.vorherigertag = cal.getTime();
+			findViewById(R.id.mainPrevDate).setEnabled(true);
+	        cal.add(Calendar.DATE, 2);
+	        while (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+	        	cal.add(Calendar.DATE, 1);
+	        }
+			sigfood.naechstertag = cal.getTime();
+			findViewById(R.id.mainNextDate).setEnabled(!sigfood.naechstertag.after(week));
+		}
 		
 		/* First clear and show loading indicator */
 		LinearLayout parent = (LinearLayout)findViewById(R.id.mainList);
