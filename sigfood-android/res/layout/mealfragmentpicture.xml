@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Kein Bild vorhaden. Klicke hier, um eins hochzuladen"
+        android:text="@string/noPicture"
         android:visibility="gone"
         tools:ignore="HardcodedText" />
 

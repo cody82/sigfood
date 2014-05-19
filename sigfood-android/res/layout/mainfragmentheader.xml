@@ -29,9 +29,8 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:maxLines="1"
-            android:text="Lade Speiseplan..."
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+            android:text="@string/loading"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/mainNextDate"

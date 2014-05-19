@@ -70,8 +70,8 @@ public class MealFragment extends Fragment {
 		TextView name = (TextView)parent.findViewById(R.id.mealTitle);
 		name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
 		TextView linie = (TextView)parent.findViewById(R.id.mealLine);
-		if (e.linie.equalsIgnoreCase("0")) linie.setText("Beilage");
-		else linie.setText("Linie " + e.linie);
+		if (e.linie.equalsIgnoreCase("0")) linie.setText(R.string.sideDish);
+		else linie.setText(getString(R.string.line) + " " + e.linie);
 		
 		final ImageButton img = (ImageButton)parent.findViewById(R.id.mealPicture);
 		Button btn = (Button)parent.findViewById(R.id.mealUpload);
@@ -120,7 +120,7 @@ public class MealFragment extends Fragment {
 		
 		bar1.setMax(50);
 		bar1.setProgress((int) (e.hauptgericht.bewertung.schnitt*10));
-		((TextView) parent.findViewById(R.id.mealRatingText)).setText(e.hauptgericht.bewertung.schnitt+", "+e.hauptgericht.bewertung.anzahl+" Bewertungen ("+e.hauptgericht.bewertung.stddev+" Abw.)");
+		((TextView) parent.findViewById(R.id.mealRatingText)).setText(e.hauptgericht.bewertung.schnitt+", "+e.hauptgericht.bewertung.anzahl+" "+getString(R.string.ratings)+" ("+e.hauptgericht.bewertung.stddev+" "+getString(R.string.deviation)+")");
 
 		TextView price_main = (TextView) parent.findViewById(R.id.mealPriceMain);
 		TextView price_sub = (TextView) parent.findViewById(R.id.mealPriceSub);
@@ -132,18 +132,18 @@ public class MealFragment extends Fragment {
 			price_sub.setVisibility(View.VISIBLE);
 			if (e.hauptgericht.preis_stud==0f || e.hauptgericht.preis_bed==0f || e.hauptgericht.preis_gast==0f) {
 				price_main.setVisibility(View.GONE);
-				price_sub.setText("Preise unbekannt");
+				price_sub.setText(R.string.pricesUnknown);
 			} else {
 				DecimalFormat currencyFormatter = new DecimalFormat("0.00€");
 				if (act.settings_price==1) {
-					price_main.setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_bed));
-					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_stud) + " Stud., " + currencyFormatter.format(e.hauptgericht.preis_gast) + " Gast)");
+					price_main.setText(getString(R.string.price) + ": " + currencyFormatter.format(e.hauptgericht.preis_bed));
+					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_stud) + " "+getString(R.string.student)+", " + currencyFormatter.format(e.hauptgericht.preis_gast) + " "+getString(R.string.guest)+")");
 				} else if (act.settings_price==2) {
-					price_main.setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_gast));
-					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_stud) + " Stud., " + currencyFormatter.format(e.hauptgericht.preis_bed) + " Bed.)");
+					price_main.setText(getString(R.string.price) + ": " + currencyFormatter.format(e.hauptgericht.preis_gast));
+					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_stud) + " "+getString(R.string.student)+", " + currencyFormatter.format(e.hauptgericht.preis_bed) + " "+getString(R.string.employee)+")");
 				} else {
-					price_main.setText("Preis: " + currencyFormatter.format(e.hauptgericht.preis_stud));
-					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_bed) + " Bed., " + currencyFormatter.format(e.hauptgericht.preis_gast) + " Gast)");
+					price_main.setText(getString(R.string.price) + ": " + currencyFormatter.format(e.hauptgericht.preis_stud));
+					price_sub.setText("(" + currencyFormatter.format(e.hauptgericht.preis_bed) + " "+getString(R.string.employee)+", " + currencyFormatter.format(e.hauptgericht.preis_gast) + " "+getString(R.string.guest)+")");
 				}
 			}
 		}
@@ -160,17 +160,17 @@ public class MealFragment extends Fragment {
         
         if (start.before(twoago)) {
                 ratingbutton.setEnabled(false);
-                ratingbutton.setText("Bewertung nicht mehr möglich");
+                ratingbutton.setText(R.string.ratingDisabledLate);
         } else if (((hour>=11 || am==Calendar.PM) && start.equals(today)) || start.before(today)) {  
             	ratingbutton.setEnabled(true);
-            	ratingbutton.setText("Bewerten");                      
+            	ratingbutton.setText(R.string.rate);                      
                 ratingbutton.setOnClickListener(new Button.OnClickListener() {
                         public void onClick(View v2)
                         {
                                 if(barr.getVisibility()==View.GONE) {
                                         bar1.setVisibility(View.GONE);
                                         barr.setVisibility(View.VISIBLE);
-                                        ratingbutton.setText("Bewertung abgeben");
+                                        ratingbutton.setText(R.string.submitRating);
                                 } else {
                                 		bar1.setVisibility(View.VISIBLE);
                                 	    barr.setVisibility(View.GONE);
@@ -182,7 +182,7 @@ public class MealFragment extends Fragment {
                 });
         } else {
                 ratingbutton.setEnabled(false);
-                ratingbutton.setText("Bewertung noch nicht möglich");
+                ratingbutton.setText(R.string.ratingDisabledEarly);
         }
 
 		LinearLayout sidedishes = (LinearLayout)v.findViewById(R.id.mealSidedish);
@@ -223,7 +223,7 @@ public class MealFragment extends Fragment {
 		
 		if (e.hauptgericht.kommentare.size()>0) {
 			v.findViewById(R.id.mealCommentLabel).setVisibility(View.VISIBLE);
-			((Button) v.findViewById(R.id.mealCommentButton)).setText("Mehr Kommentare");
+			((Button) v.findViewById(R.id.mealCommentButton)).setText(R.string.moreComments);
 			comments.setVisibility(View.VISIBLE);
 
 			LinearLayout comment = (LinearLayout)LayoutInflater.from(act.getBaseContext()).inflate(R.layout.comment, null);
@@ -243,7 +243,7 @@ public class MealFragment extends Fragment {
 			comments.addView(comment);
 		} else {
 			v.findViewById(R.id.mealCommentLabel).setVisibility(View.GONE);
-			((Button) v.findViewById(R.id.mealCommentButton)).setText("Kommentar schreiben");
+			((Button) v.findViewById(R.id.mealCommentButton)).setText(R.string.writeComment);
 			comments.setVisibility(View.GONE);
 		}
 		

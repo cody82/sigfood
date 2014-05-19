@@ -86,9 +86,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Beilagen"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        tools:ignore="HardcodedText" />
+        android:text="@string/sideDishes"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
         android:id="@+id/mealSidedish"
@@ -102,9 +101,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Neuester Kommentar"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        tools:ignore="HardcodedText" />
+        android:text="@string/newestComment"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <LinearLayout
         android:id="@+id/mealComment"

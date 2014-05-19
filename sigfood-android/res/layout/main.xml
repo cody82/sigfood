@@ -27,9 +27,8 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Die Mensa hat geschlossen!"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:ignore="HardcodedText" />
+            android:text="@string/noMeals"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
 
@@ -49,9 +48,8 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:gravity="center|bottom"
-            android:text="Keine Verbindung zu Sigfood möglich. Funktioniert die Internet-Verbindung?"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:ignore="HardcodedText" />
+            android:text="@string/noConnection"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <LinearLayout
             android:id="@+id/mainNoConnectionRetry"
@@ -65,8 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="Nochmal versuchen"
-                tools:ignore="HardcodedText" />
+                android:text="@string/tryAgain" />
         </LinearLayout>
     </LinearLayout>
 

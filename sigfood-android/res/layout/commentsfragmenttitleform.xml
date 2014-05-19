@@ -37,9 +37,8 @@
             android:id="@+id/commentsFormNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+            android:text="@string/commentFormName"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/commentsFormName"
@@ -58,9 +57,8 @@
             android:id="@+id/commentsFormTextLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kommentar"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+            android:text="@string/commentFormText"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/commentsFormText"
@@ -76,7 +74,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="Kommentar abschicken"
-        tools:ignore="HardcodedText" />
+        android:text="@string/commentFormButton" />
 
 </LinearLayout>

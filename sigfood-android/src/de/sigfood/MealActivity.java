@@ -67,8 +67,8 @@ public class MealActivity extends TabSwipeActivity {
         settings_price = Integer.parseInt(preferences.getString("price","0"));
         
         // Add each Fragment as Tab
-        addTab("Gericht", MealFragment.class, MealFragment.createBundle("Gericht"));
-        addTab("Kommentare", CommentFragment.class, CommentFragment.createBundle("Kommentare"));
+        addTab(R.string.mealTab, MealFragment.class, MealFragment.createBundle(getString(R.string.mealTab)));
+        addTab(R.string.commentsTab, CommentFragment.class, CommentFragment.createBundle(getString(R.string.commentsTab)));
         
         //mf=(MealFragment) getTab(0);
         //cf=(CommentFragment) getTab(1);
@@ -123,7 +123,7 @@ public class MealActivity extends TabSwipeActivity {
 	
 	private ProgressDialog pd;
 	void uploadPic(MensaEssen e, Date d, String filepath) {
-		pd = ProgressDialog.show(this, "Das Foto wird gerade hochgeladen...", "Bitte warten...", false, false);
+		pd = ProgressDialog.show(this, getString(R.string.uploadMessage), getString(R.string.uploadPleaseWait), false, false);
 		pd.setMax(100);
 		UploadPhotoTask upload = new UploadPhotoTask();
 		upload.execute(new UploadPhotoTaskParams(e,d,filepath));
@@ -192,16 +192,16 @@ public class MealActivity extends TabSwipeActivity {
 		@Override
 	     protected void onProgressUpdate(Integer... progress) {
 	         pd.setProgress(progress[0]);
-	         pd.setMessage(progress[0].toString() + " Bytes übertragen.");
+	         pd.setMessage(progress[0].toString() + " " + getString(R.string.uploadBytesSent));
 	     }
 
 		@Override
 	     protected void onPostExecute(Boolean result) {
 			pd.dismiss();
 			if(result)
-				Toast.makeText(MealActivity.this, "Upload done" ,Toast.LENGTH_LONG).show();
+				Toast.makeText(MealActivity.this, R.string.uploadSuccess ,Toast.LENGTH_LONG).show();
 			else
-				Toast.makeText(MealActivity.this, "Failed to load or upload", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MealActivity.this, R.string.uploadFailed, Toast.LENGTH_SHORT).show();
 	     }
 
 		public void transferred(int bytes) {
@@ -224,10 +224,10 @@ public class MealActivity extends TabSwipeActivity {
 		ImageButton btn = (ImageButton)v;
 		phototarget = btn;
 
-		final String[] items = new String[] { "Datei auswählen", "Mit Kamera aufnehmen"};
+		final String[] items = new String[] { getString(R.string.uploadChooseFile), getString(R.string.uploadTakePicture)};
 		ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.select_dialog_item, items);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Bild hochladen");
+		builder.setTitle(R.string.uploadTitle);
 		builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
 			public void onClick( DialogInterface dialog, int item ) {
 				if (item == 0) {
@@ -236,7 +236,7 @@ public class MealActivity extends TabSwipeActivity {
 	                intent.setType("image/*");
 	                intent.setAction(Intent.ACTION_GET_CONTENT);
 
-	                startActivityForResult(Intent.createChooser(intent, "App auswählen"), PICK_FROM_FILE);
+	                startActivityForResult(Intent.createChooser(intent, getString(R.string.uploadChooseApp)), PICK_FROM_FILE);
 				} else {
 					Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 					File photo = new File(Environment.getExternalStorageDirectory(), "sigfood.jpg");

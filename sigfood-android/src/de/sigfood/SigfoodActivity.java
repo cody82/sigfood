@@ -252,7 +252,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 				if (settings_price==1) price = currencyFormatter.format(e.hauptgericht.preis_bed);
 				else if (settings_price==2) price = currencyFormatter.format(e.hauptgericht.preis_gast);
 				else price = currencyFormatter.format(e.hauptgericht.preis_stud);
-				info.setText("Linie " + e.linie + ((e.hauptgericht.preis_stud==0f || e.hauptgericht.preis_bed==0f || e.hauptgericht.preis_gast==0f) ? "" : "\n" + price));
+				info.setText(getString(R.string.line) + " " + e.linie + ((e.hauptgericht.preis_stud==0f || e.hauptgericht.preis_bed==0f || e.hauptgericht.preis_gast==0f) ? "" : "\n" + price));
 	
 				final RatingBar bar1 = (RatingBar)essen.findViewById(R.id.mainMenuRating);
 				bar1.setMax(50);
@@ -308,7 +308,7 @@ public class SigfoodActivity extends SherlockActivity implements SharedPreferenc
 			
 		//LinearLayout foot = (LinearLayout)LayoutInflater.from(getBaseContext()).inflate(R.layout.mainfragmentfooter, null);
 		TextView updatetime = (TextView)findViewById(R.id.mainUpdateTime);
-		updatetime.setText(String.format("Zuletzt aktualisiert: %td.%tm.%tY, %tH:%tM", sfa.abrufdatum, sfa.abrufdatum, sfa.abrufdatum, sfa.abrufdatum, sfa.abrufdatum));
+		updatetime.setText(String.format(getString(R.string.lastRefresh)+": %td.%tm.%tY, %tH:%tM", sfa.abrufdatum, sfa.abrufdatum, sfa.abrufdatum, sfa.abrufdatum, sfa.abrufdatum));
 		//parent.addView(foot);
 	}
 

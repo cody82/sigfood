@@ -6,13 +6,11 @@
             android:id="@+id/bar_main_settings"
             android:icon="@drawable/ic_action_settings"
             android:showAsAction="always"
-            android:title="Einstellungen"
-            tools:ignore="HardcodedText" />
+            android:title="@string/settings" />
         <item
             android:id="@+id/bar_main_refresh"
             android:icon="@drawable/ic_action_refresh"
             android:showAsAction="always"
-            android:title="Aktualisieren"
-            tools:ignore="HardcodedText" />
+            android:title="@string/refresh" />
 
     </menu>

@@ -14,7 +14,6 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Kein Gericht ausgewählt!"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:ignore="HardcodedText" />
+            android:text="@string/noMealSelected"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
