@@ -50,14 +50,14 @@ public class RatingThread extends Thread {
 			if (response.getStatusLine() == null) {
 				act.runOnUiThread(new Runnable() {
 		            public void run() {
-		            	b.setText("Bewertung fehlgeschlagen");
+		            	b.setText(R.string.submitRatingFailed);
 		            }
 				});
 			} else {
 				if (response.getStatusLine().getStatusCode() != 200) {
 					act.runOnUiThread(new Runnable() {
 			            public void run() {
-			            	b.setText("Bewertung fehlgeschlagen");
+			            	b.setText(R.string.submitRatingFailed);
 			            }
 					});
 				}
@@ -66,20 +66,20 @@ public class RatingThread extends Thread {
 		} catch (ClientProtocolException e1) {
 			act.runOnUiThread(new Runnable() {
 	            public void run() {
-	            	b.setText("Bewertung fehlgeschlagen");
+	            	b.setText(R.string.submitRatingFailed);
 	            }
 			});
 		} catch (IOException e1) {
 			act.runOnUiThread(new Runnable() {
 	            public void run() {
-	            	b.setText("Bewertung fehlgeschlagen");
+	            	b.setText(R.string.submitRatingFailed);
 	            }
 			});
 		}
 
 		act.runOnUiThread(new Runnable() {
             public void run() {
-            	b.setText("Bewertet mit "+s+" Stern"+((s==1) ? "" : "en"));
+            	b.setText(R.string.submitRatingSuccessRated+" "+s+" "+((s==1) ? R.string.submitRatingSuccessStar : R.string.submitRatingSuccessStars));
             }
 		});
     }

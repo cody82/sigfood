@@ -20,16 +20,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Kein Bild vorhaden. Klicke hier, um eins hochzuladen"
+        android:text="@string/noPicture"
         android:visibility="gone"
         tools:ignore="HardcodedText" />
 
-    <ProgressBar
+    <LinearLayout
         android:id="@+id/mealPictureLoading"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:focusable="false"
-        android:focusableInTouchMode="false" />
+        android:orientation="vertical" >
+
+        <ProgressBar
+            android:id="@+id/mealPictureLoadingIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+    </LinearLayout>
 
 </LinearLayout>

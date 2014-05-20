@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sigfood</string>
+    <string name="settings">Einstellungen</string>
+    <string name="refresh">Aktualisieren</string>
+    
+    <!-- CommentFragment -->
+        <string name="comment">Kommentar</string>
+        <string name="comments">Kommentare</string>
+        <string name="submitComment">Kommentar abschicken</string>
+        
+    <!-- CommentThread -->
+        <string name="submitCommentFailed">Kommentar fehlgeschlagen</string>
+        <string name="submitCommentSuccess">Kommentar abgesendet</string>
+        
+    <!-- MealActivity -->
+        <string name="mealTab">Gericht</string>
+        <string name="commentsTab">Kommentare</string>
+        <string name="uploadChooseFile">Datei auswählen</string>
+        <string name="uploadTakePicture">Mit Kamera aufnehmen</string>
+        <string name="uploadChooseApp">App auswählen</string>
+        <string name="uploadTitle">Bild hochladen</string>
+        <string name="uploadSuccess">Upload erfolgreich</string>
+        <string name="uploadFailed">Fehler beim Upload</string>
+        <string name="uploadBytesSent">Bytes übertragen</string>
+        <string name="uploadMessage">Das Foto wird gerade hochgeladen&#8230;</string>
+        <string name="uploadPleaseWait">Bitte warten&#8230;</string>
+    
+    <!-- MealFragment -->
+        <string name="sideDish">Beilage</string>
+        <string name="ratings">Bewertungen</string>
+        <string name="deviation">Abw.</string>
+        <string name="student">Stud.</string>
+        <string name="employee">Bed.</string>
+        <string name="guest">Gast</string>
+        <string name="ratingDisabledLate">Bewertung nicht mehr möglich</string>
+        <string name="ratingDisabledEarly">Bewertung noch nicht möglich</string>
+        <string name="rate">Bewerten</string>
+        <string name="submitRating">Bewertung abgeben</string>
+        <string name="moreComments">Mehr Kommentare</string>
+        <string name="writeComment">Kommentar schreiben</string>
+        <string name="pricesUnknown">Preise unbekannt</string>
+        <string name="price">Preis</string>
+        
+    <!-- RatingThread -->
+        <string name="submitRatingFailed">Bewertung fehlgeschlagen</string>
+        <string name="submitRatingSuccessRated">Bewertet mit</string>
+        <string name="submitRatingSuccessStar">Stern</string>
+        <string name="submitRatingSuccessStars">Sternen</string>
+        
+    <!-- SigfoodActivity -->
+        <string name="line">Linie</string>
+        <string name="lastRefresh">Zuletzt aktualisiert</string>
+        
+    <!-- sigfoodsettings.xml -->
+        <string name="settingsDisplay">Anzeige</string>
+        <string name="settingsMenuPriceHighlight">Hervorgehobener Preis</string>
+        <string name="settingsMenuPriceHighlightD">Wird in der Speisekarte angezeigt</string>
+       	<string-array name="settingsMenuPriceHighlightK">
+	        <item>Studenten</item>
+	        <item>Bedienstete</item>
+	        <item>Gäste</item>
+	    </string-array>
+	    <string-array name="settingsMenuPriceHighlightV">
+	        <item>0</item>
+	        <item>1</item>
+	        <item>2</item>
+	    </string-array>
+        <string name="settingsMenuPictureSize">Bildgröße in Speisekarte</string>
+        <string name="settingsMenuPictureSizeD">Kann die Ladezeit verringern</string>
+	    <string-array name="settingsMenuPictureSizeK">
+	        <item>Keine Bilder</item>
+	        <item>Halbe Auflösung</item>
+	        <item>Volle Auflösung</item>
+	    </string-array>
+	    <string-array name="settingsMenuPictureSizeV">
+	        <item>0</item>
+	        <item>1</item>
+	        <item>2</item>
+	    </string-array>
+        <string name="settingsCacheLifeTime">Cache-Lebensdauer</string>
+        <string name="settingsCacheLifeTimeD">Gültigkeitsdauer für Speisepläne</string>
+	    <string-array name="settingsCacheLifeTimeK">
+	        <item>1 Stunde</item>
+	        <item>3 Stunden</item>
+	        <item>6 Stunden</item>
+	        <item>12 Stunden</item>
+	        <item>24 Stunden</item>
+	    </string-array>
+	    <string-array name="settingsCacheLifeTimeV">
+	        <item>1</item>
+	        <item>3</item>
+	        <item>6</item>
+	        <item>12</item>
+	        <item>24</item>
+	    </string-array>
+        <string name="settingsAbout">Über Sigfood</string>
+        <string name="settingsGithub">Sigfood auf GitHub</string>
+        <string name="settingsApache">Apache 2.0-Lizenz</string>
+        <string name="settingsApacheD">Sigfood nutzt ActionBarSherlock, welches unter dieser Lizenz steht.</string>
+        
+    <!-- commentsfragmentloader.xml -->
+        <string name="noMealSelected">Kein Gericht ausgewählt!</string>
+        
+    <!-- commentsfragmenttitle.xml -->
+        <string name="commentFormName">Name</string>
+        <string name="commentFormText">Kommentar</string>
+        <string name="commentFormButton">Kommentieren</string>
+        
+    <!-- main.xml -->
+        <string name="tryAgain">Nochmal versuchen</string>
+        <string name="noConnection">Keine Verbindung zu Sigfood möglich. Funktioniert die Internet-Verbindung?</string>
+        <string name="noMeals">Die Mensa hat geschlossen!</string>
+        
+    <!--  mainfragmentheader.xml -->
+        <string name="loading">Lade Speiseplan&#8230;</string>
+        
+    <!-- mealfragmentinfo.xml -->
+        <string name="sideDishes">Beilagen</string>
+        <string name="newestComment">Neuester Kommentar</string>
+        
+    <!-- mealfragmentpicture.xml -->
+        <string name="noPicture">Kein Bild vorhaden. Klicke hier, um eins hochzuladen</string>
+
+</resources>

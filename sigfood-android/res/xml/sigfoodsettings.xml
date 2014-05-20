@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-	android:title="Einstellungen"
+	android:title="@string/settings"
 	android:key="settings">
 
-    <PreferenceCategory android:title="Anzeige">
+    <PreferenceCategory android:title="@string/settingsDisplay">
 		<ListPreference
 			android:key="menuPriceHighlight"
-			android:title="Hervorgehobener Preis"
-			android:summary="Wird in der Speisekarte angezeigt"
-			android:entries="@array/settings_menuPriceHighlight"
-			android:entryValues="@array/settings_menuPriceHighlightV"/>
+			android:title="@string/settingsMenuPriceHighlight"
+			android:summary="@string/settingsMenuPriceHighlightD"
+			android:entries="@array/settingsMenuPriceHighlightK"
+			android:entryValues="@array/settingsMenuPriceHighlightV"/>
 		<ListPreference
 			android:key="menuPictureSize"
-			android:title="Bildgröße in Speisekarte"
-			android:summary="Kann die Ladezeit verringern"
-			android:entries="@array/settings_menuPictureSize"
-			android:entryValues="@array/settings_menuPictureSizeV"/>
+			android:title="@string/settingsMenuPictureSize"
+			android:summary="@string/settingsMenuPictureSizeD"
+			android:entries="@array/settingsMenuPictureSizeK"
+			android:entryValues="@array/settingsMenuPictureSizeV"/>
+		<ListPreference
+			android:key="cacheLifeTime"
+			android:title="@string/settingsCacheLifeTime"
+			android:summary="@string/settingsCacheLifeTimeD"
+			android:entries="@array/settingsCacheLifeTimeK"
+			android:entryValues="@array/settingsCacheLifeTimeV"/>
+	</PreferenceCategory>
+	
+    <PreferenceCategory android:title="@string/settingsAbout">
+		<Preference
+		    android:title="@string/settingsGithub"
+			android:summary="github.com/cody82/sigfood" >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="https://github.com/cody82/sigfood" />
+		</Preference>
+		<Preference
+		    android:title="@string/settingsApache"
+			android:summary="@string/settingsApacheD" >
+		    <intent android:action="android.intent.action.VIEW"
+		            android:data="http://www.apache.org/licenses/LICENSE-2.0.html" />
+		</Preference>
 	</PreferenceCategory>
 </PreferenceScreen>

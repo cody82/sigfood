@@ -54,7 +54,7 @@ public class CommentThread extends Thread {
 			if (response.getStatusLine() == null) {
 				act.runOnUiThread(new Runnable() {
 		            public void run() {
-		            	b.setText("Kommentar fehlgeschlagen");
+		            	b.setText(R.string.submitCommentFailed);
 		            	b.setEnabled(true);
 		            }
 				});
@@ -62,7 +62,7 @@ public class CommentThread extends Thread {
 				if (response.getStatusLine().getStatusCode() != 200) {
 					act.runOnUiThread(new Runnable() {
 			            public void run() {
-			            	b.setText("Kommentar fehlgeschlagen");
+			            	b.setText(R.string.submitCommentFailed);
 			            	b.setEnabled(true);
 			            }
 					});
@@ -72,14 +72,14 @@ public class CommentThread extends Thread {
 		} catch (ClientProtocolException e1) {
 			act.runOnUiThread(new Runnable() {
 	            public void run() {
-	            	b.setText("Kommentar fehlgeschlagen");
+	            	b.setText(R.string.submitCommentFailed);
 	            	b.setEnabled(true);
 	            }
 			});
 		} catch (IOException e1) {
 			act.runOnUiThread(new Runnable() {
 	            public void run() {
-	            	b.setText("Kommentar fehlgeschlagen");
+	            	b.setText(R.string.submitCommentFailed);
 	            	b.setEnabled(true);
 	            }
 			});
@@ -87,7 +87,7 @@ public class CommentThread extends Thread {
 		
 		act.runOnUiThread(new Runnable() {
             public void run() {
-            	b.setText("Kommentar abgesendet");
+            	b.setText(R.string.submitCommentSuccess);
             }
 		});
     }

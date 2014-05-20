@@ -107,8 +107,7 @@ public class HttpMultipartClient {
 
     private static final int CONNECTION_TIMEOUT = 30000;
     private static final String END = "\r\n";
-    private final String boundary = new Integer(
-            new Random().nextInt(Integer.MAX_VALUE)).toString();
+    private final String boundary = Integer.valueOf(new Random().nextInt(Integer.MAX_VALUE)).toString();
     private final String lastBoundary = END + "--" + boundary + "--" + END;
 
     private Socket socket;
@@ -277,7 +276,7 @@ public class HttpMultipartClient {
                     socket.getInputStream()));
             String line = reader.readLine();
             String[] responseLine = line.trim().split(" ", 3);
-            responseCode = new Integer(responseLine[1]);
+            responseCode = Integer.valueOf(responseLine[1]);
             responseMessage = responseLine[2];
 
             boolean headersEnd = false;
@@ -309,7 +308,6 @@ public class HttpMultipartClient {
                     reader.close();
 
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

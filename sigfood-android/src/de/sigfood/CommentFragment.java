@@ -58,7 +58,7 @@ public class CommentFragment extends Fragment {
 
 		TextView name = (TextView)v.findViewById(R.id.commentsTitle);
 		name.setText(Html.fromHtml(e.hauptgericht.bezeichnung));
-		((TextView) v.findViewById(R.id.commentsCount)).setText(e.hauptgericht.kommentare.size()+" Kommentar"+((e.hauptgericht.kommentare.size()==1) ? "" : "e"));
+		((TextView) v.findViewById(R.id.commentsCount)).setText(e.hauptgericht.kommentare.size()+" "+getString((e.hauptgericht.kommentare.size()==1) ? R.string.comment : R.string.comments));
 		
 		final LinearLayout comments = (LinearLayout)v.findViewById(R.id.commentsList);
 		comments.removeAllViews();
@@ -90,7 +90,7 @@ public class CommentFragment extends Fragment {
                     if(commentform.getVisibility() == View.GONE) {
                     		commentform.setVisibility(View.VISIBLE);
                     		comments.setVisibility(View.GONE);
-                    		commentbtn.setText("Kommentar abschicken");
+                    		commentbtn.setText(R.string.submitComment);
                     }
                     else {
                             String name = ((EditText)commentform.findViewById(R.id.commentsFormName)).getText().toString();

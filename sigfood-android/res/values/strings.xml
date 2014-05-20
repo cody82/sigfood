@@ -2,27 +2,125 @@
 <resources>
 
     <string name="app_name">Sigfood</string>
+    <string name="settings">Settings</string>
+    <string name="refresh">Refresh</string>
     
-    <string-array name="settings_menuPriceHighlight">
-        <item>Studenten</item>
-        <item>Bedienstete</item>
-        <item>Gäste</item>
-    </string-array>
-    <string-array name="settings_menuPriceHighlightV">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
+    <!-- CommentFragment -->
+        <string name="comment">comment</string>
+        <string name="comments">comments</string>
+        <string name="submitComment">Submit comment</string>
+        
+    <!-- CommentThread -->
+        <string name="submitCommentFailed">Failed to submit comment</string>
+        <string name="submitCommentSuccess">Comment submitted</string>
+        
+    <!-- MealActivity -->
+        <string name="mealTab">Meal</string>
+        <string name="commentsTab">Comments</string>
+        <string name="uploadChooseFile">Choose a File</string>
+        <string name="uploadTakePicture">Take Picture</string>
+        <string name="uploadChooseApp">Choose an App</string>
+        <string name="uploadTitle">Upload Picture</string>
+        <string name="uploadSuccess">Upload successful</string>
+        <string name="uploadFailed">Upload failed</string>
+        <string name="uploadBytesSent">bytes sent</string>
+        <string name="uploadMessage">Picture is being uploaded&#8230;</string>
+        <string name="uploadPleaseWait">Please wait&#8230;</string>
     
-    <string-array name="settings_menuPictureSize">
-        <item>Keine Bilder</item>
-        <item>Halbe Auflösung</item>
-        <item>Volle Auflösung</item>
-    </string-array>
-    <string-array name="settings_menuPictureSizeV">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
+    <!-- MealFragment -->
+        <string name="sideDish">Side Dish</string>
+        <string name="ratings">Ratings</string>
+        <string name="deviation">dev.</string>
+        <string name="student">Stud.</string>
+        <string name="employee">Emp.</string>
+        <string name="guest">Guest</string>
+        <string name="ratingDisabledLate">No ratings accepted anymore</string>
+        <string name="ratingDisabledEarly">No rating accepted yet</string>
+        <string name="rate">Rate</string>
+        <string name="submitRating">Submit rating</string>
+        <string name="moreComments">More comments</string>
+        <string name="writeComment">Write a comment</string>
+        <string name="pricesUnknown">Prices unknown</string>
+        <string name="price">Price</string>
+        
+    <!-- RatingThread -->
+        <string name="submitRatingFailed">Rating failed</string>
+        <string name="submitRatingSuccessRated">Rated</string>
+        <string name="submitRatingSuccessStar">star</string>
+        <string name="submitRatingSuccessStars">stars</string>
+        
+    <!-- SigfoodActivity -->
+        <string name="line">Line</string>
+        <string name="lastRefresh">Last refresh:</string>
+        
+    <!-- sigfoodsettings.xml -->
+        <string name="settingsDisplay">Display</string>
+        <string name="settingsMenuPriceHighlight">Highlighted Price</string>
+        <string name="settingsMenuPriceHighlightD">Shown in the menu</string>
+       	<string-array name="settingsMenuPriceHighlightK">
+	        <item>Students</item>
+	        <item>Employees</item>
+	        <item>Guests</item>
+	    </string-array>
+	    <string-array name="settingsMenuPriceHighlightV">
+	        <item>0</item>
+	        <item>1</item>
+	        <item>2</item>
+	    </string-array>
+        <string name="settingsMenuPictureSize">Menu Picture Size</string>
+        <string name="settingsMenuPictureSizeD">Can reduce loading time</string>
+	    <string-array name="settingsMenuPictureSizeK">
+	        <item>No pictures</item>
+	        <item>Half resolution</item>
+	        <item>Full resolution</item>
+	    </string-array>
+	    <string-array name="settingsMenuPictureSizeV">
+	        <item>0</item>
+	        <item>1</item>
+	        <item>2</item>
+	    </string-array>
+        <string name="settingsCacheLifeTime">Cache Lifetime</string>
+        <string name="settingsCacheLifeTimeD">How long data is valid</string>
+	    <string-array name="settingsCacheLifeTimeK">
+	        <item>1 hour</item>
+	        <item>3 hours</item>
+	        <item>6 hours</item>
+	        <item>12 hours</item>
+	        <item>24 hours</item>
+	    </string-array>
+	    <string-array name="settingsCacheLifeTimeV">
+	        <item>1</item>
+	        <item>3</item>
+	        <item>6</item>
+	        <item>12</item>
+	        <item>24</item>
+	    </string-array>
+        <string name="settingsAbout">About Sigfood</string>
+        <string name="settingsGithub">Sigfood on GitHub</string>
+        <string name="settingsApache">Apache 2.0 License</string>
+        <string name="settingsApacheD">Sigfood uses ActionBarSherlock, which uses this license.</string>
+        
+    <!-- commentsfragmentloader.xml -->
+        <string name="noMealSelected">No meal selected!</string>
+        
+    <!-- commentsfragmenttitle.xml -->
+        <string name="commentFormName">Name</string>
+        <string name="commentFormText">Comment</string>
+        <string name="commentFormButton">Submit</string>
+        
+    <!-- main.xml -->
+        <string name="tryAgain">Try Again</string>
+        <string name="noConnection">Could not connect to Sigfood. Is your internet connection working?</string>
+        <string name="noMeals">No meals for this day!</string>
+        
+    <!--  mainfragmentheader.xml -->
+        <string name="loading">Loading&#8230;</string>
+        
+    <!-- mealfragmentinfo.xml -->
+        <string name="sideDishes">Side Dishes</string>
+        <string name="newestComment">Newest Comment</string>
+        
+    <!-- mealfragmentpicture.xml -->
+        <string name="noPicture">No pictures found. Click here to upload one</string>
 
 </resources>
